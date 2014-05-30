@@ -23,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -40,22 +41,24 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private double latitude;
     private double longitude;
+    private float distance ;
     private int poids;
     private int age;
-    private DecimalFormat decimalformat = new DecimalFormat();
+    private DecimalFormat decimalformatTwo = new DecimalFormat();
+    private DecimalFormat decimalformatThree = new DecimalFormat();
     private LatLng actualPosition;
     private Location locations;
     private LocationManager locationManager;
     private List<Double> listLat = new ArrayList<Double>();
     private List<Double> listLong = new ArrayList<Double>();
-    private PolylineOptions rectOptions = new PolylineOptions().width(3).color(Color.BLUE);
+    private PolylineOptions rectOptions = new PolylineOptions().width(10).color(Color.MAGENTA);
     private Button buttonPause;
     private Button buttonStop;
     private Chronometer chronometer;
     private Intent resumeSeance;
     private TextView caloriesBurnedView;
     private TextView distanceView;
-    private TextView moyMinKmView;
+    private TextView avgMeterMinView;
     private String caloriesBurned ;
     private String provider;
     private String sexe;
@@ -66,11 +69,10 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // Set decimal 2
-        decimalformat.setMaximumFractionDigits(2);
+        // Set decimal 2 and 3 for distance
+        decimalformatTwo.setMaximumFractionDigits(2);
 
-
-        // Get extra from intentInfo
+        // Get extras from intentInfo
         Bundle extras = getIntent().getExtras();
         sexe = extras.getString("Sexe");
         poids = Integer.parseInt(extras.getString("Poids"));
@@ -80,25 +82,12 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         caloriesBurnedView = (TextView) findViewById(R.id.textViewCaloriesBurnedMaps);
         distanceView = (TextView) findViewById(R.id.textViewDistance);
-        moyMinKmView = (TextView) findViewById(R.id.textViewMoyMinKm);
+        avgMeterMinView = (TextView) findViewById(R.id.textViewMoyMinKm);
         buttonPause = (Button) findViewById(R.id.buttonPause);
         buttonStop = (Button) findViewById(R.id.buttonStop);
 
         buttonPause.setOnClickListener(this);
         buttonStop.setOnClickListener(this);
-
-        // Set strings or hours and minutes
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            public void onChronometerTick(Chronometer c) {
-                int cTextSize = c.getText().length();
-                if (cTextSize == 5) {
-                    chronometer.setText("00:"+c.getText().toString());
-                } else if (cTextSize == 7) {
-                    chronometer.setText("0"+c.getText().toString());
-                }
-            }
-        });
-
 
         // Test if GPS is enable or not
         if(testGPSEnable() == true){
@@ -110,23 +99,49 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             startActivity(i);
         }
 
-        // Get infos form GPS
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            // Get info from GPS
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        //Get the best provider based on Accuracy, power consumption, response, bearing and monetary cost
-        Criteria c = new Criteria();
-        provider = locationManager.getBestProvider(c, false);
+            //Get the best provider based on Accuracy, power consumption, response, bearing and monetary cost
+            Criteria c = new Criteria();
+            provider = locationManager.getBestProvider(c, false);
 
-        locations = locationManager.getLastKnownLocation(provider);
-        if(locations != null) {
-            longitude = locations.getLongitude();
-            latitude = locations.getLatitude();
-        }
+            locations = locationManager.getLastKnownLocation(provider);
+            if (locations != null) {
+                longitude = locations.getLongitude();
+                latitude = locations.getLatitude();
+            }
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+            // 2000 = time until update, 2 = meter until update
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, locationListener);
+            // Start chronometer when the map appears
+            chronometer.start();
+            // Set strings or hours and minutes
+            chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                    public void onChronometerTick(Chronometer c) {
+                        int cTextSize = c.getText().length();
+                        if (cTextSize == 5) {
+                            chronometer.setText("00:" + c.getText().toString());
+                        } else if (cTextSize == 7) {
+                            chronometer.setText("0" + c.getText().toString());
+                        }
 
-        // Create map
-        setUpMapIfNeeded();
+                        // Calculate
+                        //IF chrono is 10 secon we can calculate average meter to min
+                        if(chronometer.getText().toString().equals("0:30")){
+
+                            float distanceToMeter = distance*2;
+
+                            String stringResult = decimalformatTwo.format(distanceToMeter) +" m/min";
+                            avgMeterMinView.setText(stringResult);
+                        }
+
+                    }
+             });
+
+              // Create map
+              setUpMapIfNeeded();
+
     }
 
     public void onClick(View v) {
@@ -143,9 +158,12 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 locationManager.removeUpdates(locationListener);
                 locationManager = null;
                 locations = null;
+                mMap.stopAnimation();
                 Toast.makeText(getApplicationContext(), "Workout finish.", Toast.LENGTH_LONG).show();
                 resumeSeance.putExtra("Duration", chronometer.getText().toString());
-                resumeSeance.putExtra("CaloriesBurned", caloriesBurned );
+                resumeSeance.putExtra("CaloriesBurned", caloriesBurnedView.getText());
+                resumeSeance.putExtra("Distance", distanceView.getText());
+                resumeSeance.putExtra("AvgMeterKm",avgMeterMinView.getText());
                 startActivity(resumeSeance);
                 break;
         }
@@ -216,37 +234,37 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         mMap.setMyLocationEnabled(true);
         actualPosition = new LatLng(latitude,longitude);
 
-        // Start chronometer when the map appears
-        chronometer.start();
         //Toast.makeText(getApplicationContext(), "lat :" +latitude +" long: " +longitude, Toast.LENGTH_LONG).show();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
 
-        // Modifier pour ajouter début fin
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Départ"));
 
     }
 
     //Calculate distance between two points
     private double calculateDistance(){
 
-        double distance = 0.0;
+        // On réinitialise chaque fois
+        distance = 0 ;
 
-        for(int i = 0 ; i<listLat.size(); i++) {
+        for(int i = 0 ; i < listLat.size()-1; i++) {
 
-            if(listLat.size() > 1 && listLong.size() > 2) {
-                Location locationA = new Location("Point1");
+            if(listLat.size() > 1 && listLong.size() > 1) {
+                Location locationA = new Location("PointA");
                 locationA.setLatitude(listLat.get(i));
                 locationA.setLongitude(listLong.get(i));
 
-                Location locationB = new Location("Point2");
+                Location locationB = new Location("PointB");
                 locationB.setLatitude(listLat.get(i + 1));
                 locationB.setLongitude(listLong.get(i + 1));
 
-                distance = locationA.distanceTo(locationB);
-                distance = distance / 1000 ;
+                distance += locationA.distanceTo(locationB);
+                //distance = distance / 1000 ;
             }
         }
-        return Double.parseDouble(decimalformat.format(distance));
+        //Parse to float because it return string decimalformat
+        return Float.parseFloat(decimalformatTwo.format(distance));
+
+
     }
 
     //Calculate calories for men
@@ -254,9 +272,9 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
         elapsedMillis = (elapsedMillis/1000.00)/60.00;
         double calorieBurnedMen = ((age * 0.2017) + (poids * 0.09036) +
-                ((200-age) * 0.6309) - 55.0969) * Double.parseDouble(decimalformat.format(elapsedMillis))   / 4.184 ;
+                ((220-age) * 0.6309) - 55.0969) * Double.parseDouble(decimalformatTwo.format(elapsedMillis))   / 4.184 ;
 
-        return Double.parseDouble(decimalformat.format(calorieBurnedMen));
+        return Double.parseDouble(decimalformatTwo.format(calorieBurnedMen));
     }
 
     //Calculate calories for women
@@ -264,9 +282,9 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
         elapsedMillis = (elapsedMillis/1000.00)/60.00;
         double calorieBurnedWomen = ((age * 0.074) + (poids * 0.05741) +
-                ((200-age) * 0.4472) - 20.4022) * Double.parseDouble(decimalformat.format(elapsedMillis))  / 4.184 ;
+                ((220-age) * 0.4472) - 20.4022) * Double.parseDouble(decimalformatTwo.format(elapsedMillis))  / 4.184 ;
 
-        return Double.parseDouble(decimalformat.format(calorieBurnedWomen));
+        return Double.parseDouble(decimalformatTwo.format(calorieBurnedWomen));
     }
 
 
@@ -275,14 +293,20 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             locations = location;
             longitude = location.getLongitude();
             latitude = location.getLatitude();
+
             double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
             elapsedMillis = (elapsedMillis/1000.00)/60.00;
 
-            Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Minutes :" +decimalformat.format(elapsedMillis), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Minutes :" +decimalformatTwo.format(elapsedMillis) + "Distance " +distance + "SizeList "+ listLat.size(), Toast.LENGTH_SHORT).show();
 
             // Add to the list the new Lat & Long
             listLat.add(latitude);
             listLong.add(longitude);
+
+            // add marker start, only one time
+            if(listLat.size() < 2) {
+                mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(0), listLong.get(0))).title("Start"));
+            }
 
             // Add a points(location) and draw the polyline when 2 points are inserted
             rectOptions.add(new LatLng(latitude, longitude));
@@ -298,8 +322,10 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 caloriesBurnedView.setText(caloriesBurned + " calories");
             }
 
-            // UPDATE textViews DISTANCE bugg
-            //distanceView.setText(String.valueOf(calculateDistance() +" km"));
+            // UPDATE textViews DISTANCE
+            distanceView.setText(decimalformatTwo.format(calculateDistance()) +" m");
+
+
 
         }
 

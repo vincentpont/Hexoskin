@@ -115,7 +115,7 @@
                 android:id="@+id/textView7"
                 android:layout_column="0"
                 android:height="30dp"
-                android:text="Moy. min/km"
+                android:text="Avg. meter/min"
                 android:textSize="18dp"
                 android:paddingLeft="10dp"
                 android:textColor="#8C000000"/>

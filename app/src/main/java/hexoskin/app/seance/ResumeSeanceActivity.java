@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.example.hexoskin.app.R;
 
+import org.w3c.dom.Text;
+
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.maps.MapsActivity;
 
@@ -20,10 +22,13 @@ public class ResumeSeanceActivity extends Activity {
     private String durationExtras;
     private TextView durationView;
     private TextView caloriesView;
+    private TextView distanceView;
+    private TextView avgMeterMinView;
     private Intent intentInfos;
-    private Intent intentMaps;
     private Intent intentNewSeance;
     private String calorieBurnedExtras;
+    private String distanceExtras;
+    private String avgMeterMinExtras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,20 +36,35 @@ public class ResumeSeanceActivity extends Activity {
         setContentView(R.layout.activity_resume_seance);
 
         intentInfos = new Intent(this, InfosUserActivity.class);
-        intentMaps = new Intent(this, MapsActivity.class);
         intentNewSeance = new Intent(this, NewSeanceActivity.class);
 
         Bundle extras = getIntent().getExtras();
         durationExtras = extras.getString("Duration");
         calorieBurnedExtras = extras.getString("CaloriesBurned");
+        distanceExtras = extras.getString("Distance");
+        avgMeterMinExtras = extras.getString("AvgMeterKm");
 
         durationView = (TextView) findViewById(R.id.textViewDurationResume);
         caloriesView = (TextView) findViewById(R.id.textViewCaloriesBurnedResume);
+        distanceView = (TextView) findViewById(R.id.textViewDistanceResume);
+        avgMeterMinView = (TextView) findViewById(R.id.textAvgMeterMinResume);
 
+        // Set TextViews
         if(calorieBurnedExtras != null) {
-            caloriesView.setText(calorieBurnedExtras + " calories");
+            caloriesView.setText(calorieBurnedExtras);
         }
-        durationView.setText(durationExtras);
+
+        if(distanceExtras != null) {
+            distanceView.setText(distanceExtras);
+        }
+
+        if(durationExtras != null) {
+            durationView.setText(durationExtras);
+        }
+
+        if(avgMeterMinExtras != null){
+            avgMeterMinView.setText(avgMeterMinExtras);
+        }
 
     }
 
