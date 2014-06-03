@@ -153,7 +153,8 @@
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:background="@drawable/buttonstyle"
-                android:src="@android:drawable/ic_menu_save" />
+                android:src="@android:drawable/ic_menu_save"
+                android:minHeight="45dp" />
 
 
             <ImageButton
@@ -164,7 +165,8 @@
                 android:layout_marginLeft="15dp"
                 android:layout_column="4"
                 android:background="@drawable/buttonstyle"
-                android:src="@android:drawable/ic_menu_delete" />
+                android:src="@android:drawable/ic_menu_delete"
+                android:minHeight="45dp" />
 
         </TableRow>
 

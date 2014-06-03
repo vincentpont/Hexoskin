@@ -47,8 +47,7 @@
                 android:id="@+id/buttonEnableGPS"
                 android:background="@drawable/buttonstyle"
                 android:layout_column="0"
-                android:textAlignment="center"
-                android:width="0dp"
+                android:minHeight="45dp"
                 android:src="@drawable/gpsbutton"/>
 
         </TableRow>
@@ -84,16 +83,16 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <ImageButton
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonStart"
                 android:background="@drawable/buttonstyle"
                 android:layout_column="0"
-                android:enabled="true"
-                android:clickable="false"
-                android:minHeight="45dp"
-                android:src="@android:drawable/ic_media_play"/>
+                android:text="RUN"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:minHeight="45dp"/>
 
         </TableRow>
 
@@ -136,12 +135,6 @@
                 android:scrollingCache="true"
                 android:entries="@array/arrayLastWorkout" />
         </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-        </TableRow>
-
 
     </TableLayout>
 </RelativeLayout>

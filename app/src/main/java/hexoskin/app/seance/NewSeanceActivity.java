@@ -20,7 +20,7 @@ import hexoskin.app.maps.MapsActivity;
 public class NewSeanceActivity extends Activity {
 
     private ImageButton buttonEnableGPS ;
-    private ImageButton buttonStart ;
+    private Button buttonStart ;
     private Boolean isGPSEnable;
     private Intent intentInfos;
     private Intent intentMaps;
@@ -36,9 +36,9 @@ public class NewSeanceActivity extends Activity {
         intentNewSeance = new Intent(this, NewSeanceActivity.class);
 
         buttonEnableGPS = (ImageButton) findViewById(R.id.buttonEnableGPS);
-        buttonStart = (ImageButton) findViewById(R.id.buttonStart);
+        buttonStart = (Button) findViewById(R.id.buttonStart);
 
-        // If GPS is enable we hide the button to ask user ot enable GPS
+        // If GPS is enable we disabled the button
         if(testGPSEnable() == true){
             buttonEnableGPS.setEnabled(false);
         }

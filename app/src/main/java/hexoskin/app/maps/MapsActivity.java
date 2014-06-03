@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -46,15 +47,20 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private double latitude;
     private double longitude;
     private float distance ;
+    private float distanceMeterMin;
+    private long timeWhenStopped = 0;
     private int poids;
     private int age;
+    private int cTextSize;
     private DecimalFormat decimalformatTwo = new DecimalFormat();
     private LatLng actualPosition;
     private Location locations;
+    private Location locationWhenStopped;
     private LocationManager locationManager;
     private List<Double> listLat = new ArrayList<Double>();
     private List<Double> listLong = new ArrayList<Double>();
     private PolylineOptions rectOptions = new PolylineOptions().width(10).color(Color.MAGENTA);
+    private ImageButton buttonPlay;
     private ImageButton buttonPause;
     private ImageButton buttonStop;
     private Chronometer chronometer;
@@ -65,30 +71,12 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private String caloriesBurned ;
     private String provider;
     private String sexe;
-    private int status;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
-
-        if (status != ConnectionResult.SUCCESS) {
-            int requestCode = 10;
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
-            dialog.show();
-            return;
-        }
-
-        SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
-        // Check if first run
-        if (savedInstanceState == null) {
-            // Prevent map from resetting when screen rotated
-            supportMapFragment.setRetainInstance(true);
-        }
 
         // Set decimal 2 for distance
         decimalformatTwo.setMaximumFractionDigits(2);
@@ -104,11 +92,15 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         caloriesBurnedView = (TextView) findViewById(R.id.textViewCaloriesBurnedMaps);
         distanceView = (TextView) findViewById(R.id.textViewDistance);
         avgMeterMinView = (TextView) findViewById(R.id.textViewMoyMinKm);
+        buttonPlay = (ImageButton) findViewById(R.id.buttonPlay);
         buttonPause = (ImageButton) findViewById(R.id.buttonPause);
         buttonStop = (ImageButton) findViewById(R.id.buttonStop);
 
-        buttonPause.setOnClickListener(this);
+
+        // Add listener
+        buttonPlay.setOnClickListener(this);
         buttonStop.setOnClickListener(this);
+        buttonPause.setOnClickListener(this);
 
         // Test if GPS is enable or not
         if(testGPSEnable() == true){
@@ -120,6 +112,53 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             startActivity(i);
         }
 
+
+
+            // Chronometer listener
+            chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+                    public void onChronometerTick(Chronometer c) {
+                        cTextSize = c.getText().length();
+                        // Set strings or hours and minutes
+                        if (cTextSize == 5) {
+                            chronometer.setText("00:" + c.getText().toString());
+                        } else if (cTextSize == 7) {
+                            chronometer.setText("0" + c.getText().toString());
+                        }
+                        // Calculate meter/min
+                        //IF chrono is 15 second we can calculate average for one min, etc..
+                        if(chronometer.getText().toString().equals("0:15")){
+                            distanceMeterMin = distance*4;
+                            String stringResult = decimalformatTwo.format(distanceMeterMin) +" m/min";
+                            avgMeterMinView.setText(stringResult);
+                        }
+                        else if(chronometer.getText().toString().equals("0:30")){
+                            distanceMeterMin = distance*2;
+                            String stringResult = decimalformatTwo.format(distanceMeterMin) +" m/min";
+                            avgMeterMinView.setText(stringResult);
+                        }
+                        else if(chronometer.getText().toString().equals("1:00")){
+                            distanceMeterMin = distance;
+                            String stringResult = decimalformatTwo.format(distanceMeterMin) +" m/min";
+                            avgMeterMinView.setText(stringResult);
+                        }
+                        else if(chronometer.getText().toString().equals("10:00")){
+                            distanceMeterMin = distance/10;
+                            String stringResult = decimalformatTwo.format(distanceMeterMin) +" m/min";
+                            avgMeterMinView.setText(stringResult);
+                        }
+                        else if(chronometer.getText().toString().equals("30:00")){
+                            distanceMeterMin = distance/30;
+                            String stringResult = decimalformatTwo.format(distanceMeterMin) +" m/min";
+                            avgMeterMinView.setText(stringResult);
+                        }
+                        else if(chronometer.getText().toString().equals("1:00:00")){
+                            distanceMeterMin = distance/60;
+                            String stringResult = decimalformatTwo.format(distanceMeterMin) +" m/min";
+                            avgMeterMinView.setText(stringResult);
+                        }
+                    }
+             });
+
             // Get info from GPS
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -128,59 +167,62 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             provider = locationManager.getBestProvider(c, false);
 
             locations = locationManager.getLastKnownLocation(provider);
+
+            // If we have an older location
             if (locations != null) {
                 longitude = locations.getLongitude();
                 latitude = locations.getLatitude();
             }
 
-            // 2000 = time until update, 2 = meter until update
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, locationListener);
-            // Start chronometer when the map appears
-            chronometer.start();
-            // Set strings or hours and minutes
-            chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-                    public void onChronometerTick(Chronometer c) {
-                        int cTextSize = c.getText().length();
-                        if (cTextSize == 5) {
-                            chronometer.setText("00:" + c.getText().toString());
-                        } else if (cTextSize == 7) {
-                            chronometer.setText("0" + c.getText().toString());
-                        }
+            // Create map
+            setUpMapIfNeeded();
 
-                        // Calculate
-                        //IF chrono is 10 secon we can calculate average meter to min
-                        if(chronometer.getText  ().toString().equals("0:30")){
-
-                            float distanceToMeter = distance*2;
-
-                            String stringResult = decimalformatTwo.format(distanceToMeter) +" m/min";
-                            avgMeterMinView.setText(stringResult);
-                        }
-
-                    }
-             });
-
-              // Create map
-              setUpMapIfNeeded();
+            Toast.makeText(getApplicationContext(), "Before launch, wait until your location is good.", Toast.LENGTH_LONG).show();
 
     }
 
+    // Button during workout play/pause stop
     public void onClick(View v) {
         switch(v.getId()) {
+            case R.id.buttonPlay:
+                buttonPlay.setEnabled(false);
+
+                // Launch listener GPS, 2000 = time until update, 2 = meter until update
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, locationListener);
+
+                chronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
+                chronometer.start();
+
+                break;
+
             case R.id.buttonPause:
+                buttonPlay.setEnabled(true);
+
+                // Save the chronometer
+                timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
                 chronometer.stop();
-                chronometer.setBase(SystemClock.elapsedRealtime());
+
+                // Save last location
+                locationWhenStopped = locationManager.getLastKnownLocation(provider);
+                locations = locationWhenStopped;
+
+                // Stop GPS listener
+                locationManager.removeUpdates(locationListener);
                 break;
 
             case R.id.buttonStop:
-
+                // Close GPS activity and chronometer
                 chronometer.stop();
-                // Close GPS activity
                 locationManager.removeUpdates(locationListener);
                 locationManager = null;
                 locations = null;
                 mMap.stopAnimation();
                 Toast.makeText(getApplicationContext(), "Workout finish.", Toast.LENGTH_LONG).show();
+
+                // Add finish marker
+                mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(listLat.size()-1), listLong.get(listLong.size()-1))).title("Finish"));
+
+                // Pass the values for resume seance
                 resumeSeance.putExtra("Duration", chronometer.getText().toString());
                 resumeSeance.putExtra("CaloriesBurned", caloriesBurnedView.getText());
                 resumeSeance.putExtra("Distance", distanceView.getText());
@@ -209,28 +251,13 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
     // Method that test is GPS is enable or not
     private Boolean testGPSEnable(){
-
         Boolean test ;
         LocationManager mlocManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
         test = mlocManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         return test;
     }
 
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
+    // Set up the Google maps
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -245,12 +272,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     }
 
 
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
+    // Add attributes to the maps (location, markers)
     private void setUpMap() {
         mMap.setMyLocationEnabled(true);
         actualPosition = new LatLng(latitude,longitude);
@@ -258,13 +280,12 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         //Toast.makeText(getApplicationContext(), "lat :" +latitude +" long: " +longitude, Toast.LENGTH_LONG).show();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
 
-
     }
 
     //Calculate distance between two points
     private String calculateDistance(){
 
-        // On réinitialise chaque fois
+        // We must reset the variable
         distance = 0 ;
 
         for(int i = 0 ; i < listLat.size()-1; i++) {
@@ -282,11 +303,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
             }
         }
-
-        // BUG ICI Invalid float: "1'001.4"
         return decimalformatTwo.format(distance);
-
-
     }
 
     //Calculate calories for men
@@ -316,25 +333,22 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             longitude = location.getLongitude();
             latitude = location.getLatitude();
 
-            double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
-            elapsedMillis = (elapsedMillis/1000.00)/60.00;
-
-            //Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Minutes :" +decimalformatTwo.format(elapsedMillis) + "Distance " +distance + "SizeList "+ listLat.size(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Distance " +distance + "SizeList "+ listLat.size(), Toast.LENGTH_SHORT).show();
 
             // Add to the list the new Lat & Long
             listLat.add(latitude);
             listLong.add(longitude);
 
-            // add marker start, only one time
+            // Add marker start, only one time
             if(listLat.size() == 1) {
                 mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(0), listLong.get(0))).title("Start"));
             }
 
-            // Add a points(location) and draw the polyline when 2 points are inserted
+            // Add a point(location) and draw the polyline when 2 points are inserted
             rectOptions.add(new LatLng(latitude, longitude));
             mMap.addPolyline(rectOptions);
 
-            // UPDATE textViews CALORIES, if women or men calcule are differents
+            // UPDATE textViews CALORIES, and check if women or men
             if(sexe.toString().equals("femme")){
                 caloriesBurned = String.valueOf(calculateCaloriesWomen());
                 caloriesBurnedView.setText(caloriesBurned + " calories");
