@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -23,7 +24,7 @@ import hexoskin.app.seance.NewSeanceActivity;
 
 public class InfosUserActivity extends Activity {
 
-    private Button buttonSaveInfo;
+    private ImageButton buttonSaveInfo;
     private Spinner spinnerPoids;
     private Spinner spinnerAge;
     private Spinner spinnerSexe;
@@ -38,7 +39,7 @@ public class InfosUserActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_infos_user);
 
-        buttonSaveInfo = (Button) findViewById(R.id.buttonSaveInfo);
+        buttonSaveInfo = (ImageButton) findViewById(R.id.buttonSaveInfo);
         spinnerPoids = (Spinner) findViewById(R.id.spinnerPoids);
         spinnerAge = (Spinner) findViewById(R.id.spinnerAge);
         spinnerSexe = (Spinner) findViewById(R.id.spinnerSexe);

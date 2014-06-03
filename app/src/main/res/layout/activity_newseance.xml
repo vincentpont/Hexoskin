@@ -41,14 +41,16 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Activer GPS"
                 android:id="@+id/buttonEnableGPS"
+                android:background="@drawable/buttonstyle"
                 android:layout_column="0"
                 android:textAlignment="center"
-                android:width="0dp" />
+                android:width="0dp"
+                android:src="@drawable/gpsbutton"/>
+
         </TableRow>
 
         <TableRow
@@ -82,14 +84,17 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start!"
                 android:id="@+id/buttonStart"
+                android:background="@drawable/buttonstyle"
                 android:layout_column="0"
                 android:enabled="true"
-                android:clickable="false" />
+                android:clickable="false"
+                android:minHeight="45dp"
+                android:src="@android:drawable/ic_media_play"/>
+
         </TableRow>
 
         <TableRow

@@ -144,18 +144,30 @@
 
         </TableRow>
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+        <TableRow>
 
-            <Button
+
+            <ImageButton
+                android:id="@+id/ImageButtonSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sauvegarder"
-                android:id="@+id/buttonSaveActivity"
-                android:textSize="18dp"/>
+                android:layout_column="0"
+                android:background="@drawable/buttonstyle"
+                android:src="@android:drawable/ic_menu_save" />
+
+
+            <ImageButton
+                android:id="@+id/ImageButtonDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_column="4"
+                android:background="@drawable/buttonstyle"
+                android:src="@android:drawable/ic_menu_delete" />
 
         </TableRow>
+
     </TableLayout>
 
 </RelativeLayout>

@@ -1,86 +1,99 @@
 package hexoskin.app.testApi;
 
-import android.graphics.Color;
-import android.os.Bundle;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.appspot.helloendpoints.helloworld.model.HelloGreeting;
+import com.appspot.helloendpoints.helloworld.Helloworld;
+import com.appspot.helloendpoints.helloworld.Helloworld.Greetings.PutData;
+
 import com.example.hexoskin.app.R;
-import com.google.common.base.Strings;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+
 
 public class TestApiActivity extends ActionBarActivity {
-    private static final String LOG_TAG = "MainActivity";
-    private GreetingsDataAdapter mListAdapter;
+
+
+    private Button buttonSaveData ;
+    private TextView idEmployeeView;
+    private TextView firstnameView;
+    private TextView lastnameView;
+    private AsyncTask<Void, Void, PutData> putData;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_api);
 
-        // Prevent the keyboard from being visible upon startup.
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        ListView listView = (ListView) findViewById(R.id.greetings_list_view);
-        mListAdapter = new GreetingsDataAdapter((Application) getApplication());
-        listView.setAdapter(mListAdapter);
+        idEmployeeView = (TextView) findViewById(R.id.textViewIDEmployee);
+        firstnameView = (TextView) findViewById(R.id.textViewFirstname);
+        lastnameView = (TextView) findViewById(R.id.textViewLastname);
+        buttonSaveData = (Button) findViewById(R.id.buttonSaveData);
+
+        putData = new AsyncTask<Void, Void, PutData > () {
+
+                    @Override
+                    protected PutData doInBackground(Void... voids) {
+
+                        // Retrieve service handle.
+                        Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
+
+                        try {
+
+                            PutData putDataInStore = apiServiceHandle.greetings()
+                                    .putData(idEmployeeView.getText().toString(),
+                                            firstnameView.getText().toString(),
+                                            lastnameView.getText().toString());
+
+                            putDataInStore.execute();
+
+                        } catch (IOException e) {
+                        }
+                        return null;
+                    }
+
+        };
+
+        // Listener saveInfo
+        buttonSaveData.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                putData.execute();
+                Toast.makeText(getApplicationContext(), "Data saved.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
-    /**
-     * Simple use of an ArrayAdapter but we're using a static class to ensure no references to the
-     * Activity exists.
-     */
-    static class GreetingsDataAdapter extends ArrayAdapter {
-        GreetingsDataAdapter(Application application) {
-            super(application.getApplicationContext(), android.R.layout.simple_list_item_1,
-                    application.greetings);
-        }
 
-        void replaceData(HelloGreeting[] greetings) {
-            clear();
-            for (HelloGreeting greeting : greetings) {
-                add(greeting);
-            }
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView view = (TextView) super.getView(position, convertView, parent);
-
-            HelloGreeting greeting = (HelloGreeting)this.getItem(position);
-
-            StringBuilder sb = new StringBuilder();
-
-            Set<String> fields = greeting.keySet();
-            boolean firstLoop = true;
-            for (String fieldName : fields) {
-                // Append next line chars to 2.. loop runs.
-                if (firstLoop) {
-                    firstLoop = false;
-                } else {
-                    sb.append("\n");
-                }
-
-                sb.append(fieldName)
-                        .append(": ")
-                        .append(greeting.get(fieldName));
-            }
-
-            view.setText(sb.toString());
-            return view;
-        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.test_api, menu);
+        return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

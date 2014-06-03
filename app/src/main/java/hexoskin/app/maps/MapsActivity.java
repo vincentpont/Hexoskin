@@ -1,5 +1,6 @@
 package hexoskin.app.maps;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,11 +15,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hexoskin.app.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -45,15 +49,14 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private int poids;
     private int age;
     private DecimalFormat decimalformatTwo = new DecimalFormat();
-    private DecimalFormat decimalformatThree = new DecimalFormat();
     private LatLng actualPosition;
     private Location locations;
     private LocationManager locationManager;
     private List<Double> listLat = new ArrayList<Double>();
     private List<Double> listLong = new ArrayList<Double>();
     private PolylineOptions rectOptions = new PolylineOptions().width(10).color(Color.MAGENTA);
-    private Button buttonPause;
-    private Button buttonStop;
+    private ImageButton buttonPause;
+    private ImageButton buttonStop;
     private Chronometer chronometer;
     private Intent resumeSeance;
     private TextView caloriesBurnedView;
@@ -62,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private String caloriesBurned ;
     private String provider;
     private String sexe;
+    private int status;
 
 
     @Override
@@ -69,7 +73,24 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // Set decimal 2 and 3 for distance
+        status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
+
+        if (status != ConnectionResult.SUCCESS) {
+            int requestCode = 10;
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
+            dialog.show();
+            return;
+        }
+
+        SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        // Check if first run
+        if (savedInstanceState == null) {
+            // Prevent map from resetting when screen rotated
+            supportMapFragment.setRetainInstance(true);
+        }
+
+        // Set decimal 2 for distance
         decimalformatTwo.setMaximumFractionDigits(2);
 
         // Get extras from intentInfo
@@ -83,8 +104,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         caloriesBurnedView = (TextView) findViewById(R.id.textViewCaloriesBurnedMaps);
         distanceView = (TextView) findViewById(R.id.textViewDistance);
         avgMeterMinView = (TextView) findViewById(R.id.textViewMoyMinKm);
-        buttonPause = (Button) findViewById(R.id.buttonPause);
-        buttonStop = (Button) findViewById(R.id.buttonStop);
+        buttonPause = (ImageButton) findViewById(R.id.buttonPause);
+        buttonStop = (ImageButton) findViewById(R.id.buttonStop);
 
         buttonPause.setOnClickListener(this);
         buttonStop.setOnClickListener(this);
@@ -128,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
                         // Calculate
                         //IF chrono is 10 secon we can calculate average meter to min
-                        if(chronometer.getText().toString().equals("0:30")){
+                        if(chronometer.getText  ().toString().equals("0:30")){
 
                             float distanceToMeter = distance*2;
 
@@ -241,7 +262,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     }
 
     //Calculate distance between two points
-    private double calculateDistance(){
+    private String calculateDistance(){
 
         // On réinitialise chaque fois
         distance = 0 ;
@@ -258,11 +279,12 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 locationB.setLongitude(listLong.get(i + 1));
 
                 distance += locationA.distanceTo(locationB);
-                //distance = distance / 1000 ;
+
             }
         }
-        //Parse to float because it return string decimalformat
-        return Float.parseFloat(decimalformatTwo.format(distance));
+
+        // BUG ICI Invalid float: "1'001.4"
+        return decimalformatTwo.format(distance);
 
 
     }
@@ -304,7 +326,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             listLong.add(longitude);
 
             // add marker start, only one time
-            if(listLat.size() < 2) {
+            if(listLat.size() == 1) {
                 mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(0), listLong.get(0))).title("Start"));
             }
 
@@ -323,7 +345,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             }
 
             // UPDATE textViews DISTANCE
-            distanceView.setText(decimalformatTwo.format(calculateDistance()) +" m");
+            distanceView.setText(calculateDistance() +" m");
 
 
 

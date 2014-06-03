@@ -31,7 +31,8 @@
         <activity
             android:name="hexoskin.app.maps.MapsActivity"
             android:label="@string/title_activity_maps"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:screenOrientation="portrait"> <!--Stop fragment -->
         </activity>
 
         <meta-data
@@ -43,7 +44,8 @@
 
         <activity
             android:name="hexoskin.app.testApi.TestApiActivity"
-            android:label="@string/title_activity_test_api" >
+            android:label="@string/title_activity_test_api"
+            android:theme="@style/Theme.AppCompat">
         </activity>
     </application>
 
