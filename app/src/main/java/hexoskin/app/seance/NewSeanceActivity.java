@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.hexoskin.app.R;
@@ -25,6 +27,7 @@ public class NewSeanceActivity extends Activity {
     private Intent intentInfos;
     private Intent intentMaps;
     private Intent intentNewSeance;
+    private ListView listViewHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class NewSeanceActivity extends Activity {
 
         buttonEnableGPS = (ImageButton) findViewById(R.id.buttonEnableGPS);
         buttonStart = (Button) findViewById(R.id.buttonStart);
+        listViewHistory = (ListView) findViewById(R.id.listViewHistory);
 
         // If GPS is enable we disabled the button
         if(testGPSEnable() == true){
@@ -83,6 +87,14 @@ public class NewSeanceActivity extends Activity {
                     buttonEnableGPS.setEnabled(true);
                     Toast.makeText(getApplicationContext(), "The GPS is not enable!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        // Listener on list
+        listViewHistory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> myAdapter, View myView, int myItemInt, long mylng) {
+                String selectedFromList = (String) (listViewHistory.getItemAtPosition(myItemInt));
+                Toast.makeText(getApplicationContext(), "Item : " +selectedFromList, Toast.LENGTH_SHORT).show();
             }
         });
 

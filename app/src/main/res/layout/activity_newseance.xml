@@ -130,7 +130,7 @@
             <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/listView"
+                android:id="@+id/listViewHistory"
                 android:layout_column="0"
                 android:scrollingCache="true"
                 android:entries="@array/arrayLastWorkout" />

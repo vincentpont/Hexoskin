@@ -1,18 +1,11 @@
-package hexoskin.app.testApi;
+package hexoskin.app.apiGoogle;
 
 
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-
-import com.appspot.helloendpoints.helloworld.Helloworld;
+import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
-
-
-import javax.annotation.Nullable;
 
 
 /**
@@ -34,6 +27,7 @@ public class AppConstants {
      * Retrieve a Helloworld api service handle to access the API.
      */
     public static Helloworld getApiServiceHandle() {
+
         // Use a builder to help formulate the API request.
         Helloworld.Builder helloWorld = new Helloworld.Builder(AppConstants.HTTP_TRANSPORT,
                 AppConstants.JSON_FACTORY,null);

@@ -2,22 +2,26 @@ package hexoskin.app.seance;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.appspot.logical_light_564.helloworld.Helloworld;
+import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutData;
 import com.example.hexoskin.app.R;
 
-import org.w3c.dom.Text;
+import java.io.IOException;
 
 import hexoskin.app.info.InfosUserActivity;
-import hexoskin.app.maps.MapsActivity;
+import hexoskin.app.apiGoogle.AppConstants;
 
 public class ResumeSeanceActivity extends Activity {
-
 
     private String durationExtras;
     private TextView durationView;
@@ -29,6 +33,10 @@ public class ResumeSeanceActivity extends Activity {
     private String calorieBurnedExtras;
     private String distanceExtras;
     private String avgMeterMinExtras;
+    private ImageButton imageButtonSave;
+    private ImageButton imageButtonDelete;
+    private AsyncTask<Void, Void, PutData> putData;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,7 @@ public class ResumeSeanceActivity extends Activity {
 
         intentInfos = new Intent(this, InfosUserActivity.class);
         intentNewSeance = new Intent(this, NewSeanceActivity.class);
+
 
         Bundle extras = getIntent().getExtras();
         durationExtras = extras.getString("Duration");
@@ -48,8 +57,62 @@ public class ResumeSeanceActivity extends Activity {
         caloriesView = (TextView) findViewById(R.id.textViewCaloriesBurnedResume);
         distanceView = (TextView) findViewById(R.id.textViewDistanceResume);
         avgMeterMinView = (TextView) findViewById(R.id.textAvgMeterMinResume);
+        imageButtonSave = (ImageButton) findViewById(R.id.imageButtonSave);
+        imageButtonDelete = (ImageButton) findViewById(R.id.imageButtonDelete);
 
-        // Set TextViews
+        putData = new AsyncTask<Void, Void, Helloworld.Greetings.PutData> () {
+
+            @Override
+            protected Helloworld.Greetings.PutData doInBackground(Void... voids) {
+
+                // Retrieve service handle.
+                Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
+
+                try {
+                    // Call the api method and pass the values to save the data
+                    Helloworld.Greetings.PutData putDataInStore = apiServiceHandle.greetings()
+                            .putData(distanceView.getText().toString(),
+                                    durationView.getText().toString(),
+                                    caloriesView.getText().toString(),
+                                    avgMeterMinView.getText().toString()
+                            );
+
+
+                    putDataInStore.execute();
+
+                } catch (IOException e) {
+                    Log.e("Error", e.toString());
+                }
+                return null;
+            }
+
+        };
+
+
+        // Listener save data in DataStore
+        imageButtonSave.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                putData.execute();
+                Toast.makeText(getApplicationContext(), "Seance saved.", Toast.LENGTH_SHORT).show();
+                startActivity(intentNewSeance);
+            }
+        });
+
+        // Listener save data in DataStore
+        imageButtonDelete.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Seance deleted.", Toast.LENGTH_SHORT).show();
+                startActivity(intentNewSeance);
+            }
+        });
+
+
+
+        // Set the TextViews
         if(calorieBurnedExtras != null) {
             caloriesView.setText(calorieBurnedExtras);
         }
