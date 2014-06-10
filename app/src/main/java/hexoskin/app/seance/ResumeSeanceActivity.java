@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.apiGoogle.AppConstants;
+import hexoskin.app.login.PlusBaseActivity;
+
 
 public class ResumeSeanceActivity extends Activity {
 
@@ -36,6 +38,7 @@ public class ResumeSeanceActivity extends Activity {
     private ImageButton imageButtonSave;
     private ImageButton imageButtonDelete;
     private AsyncTask<Void, Void, PutData> putData;
+    private String emailUser;
 
 
     @Override
@@ -45,6 +48,10 @@ public class ResumeSeanceActivity extends Activity {
 
         intentInfos = new Intent(this, InfosUserActivity.class);
         intentNewSeance = new Intent(this, NewSeanceActivity.class);
+
+        // Call class intern and get userEmail
+        PlusBaseActivity.ClassIntern ca = new PlusBaseActivity.ClassIntern();
+        emailUser = ca.getEmailUser();
 
 
         Bundle extras = getIntent().getExtras();
@@ -60,6 +67,7 @@ public class ResumeSeanceActivity extends Activity {
         imageButtonSave = (ImageButton) findViewById(R.id.imageButtonSave);
         imageButtonDelete = (ImageButton) findViewById(R.id.imageButtonDelete);
 
+
         putData = new AsyncTask<Void, Void, Helloworld.Greetings.PutData> () {
 
             @Override
@@ -71,7 +79,8 @@ public class ResumeSeanceActivity extends Activity {
                 try {
                     // Call the api method and pass the values to save the data
                     Helloworld.Greetings.PutData putDataInStore = apiServiceHandle.greetings()
-                            .putData(distanceView.getText().toString(),
+                            .putData(emailUser,
+                                    distanceView.getText().toString(),
                                     durationView.getText().toString(),
                                     caloriesView.getText().toString(),
                                     avgMeterMinView.getText().toString()

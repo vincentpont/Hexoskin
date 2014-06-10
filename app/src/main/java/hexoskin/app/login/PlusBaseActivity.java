@@ -6,14 +6,11 @@ import android.os.Bundle;
 
 import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.plus.PlusClient;
-
-import hexoskin.app.info.InfosUserActivity;
 
 
 /**
@@ -36,13 +33,14 @@ public abstract class PlusBaseActivity extends Activity
 
     // This is the helper object that connects to Google Play Services.
     private PlusClient mPlusClient;
+    private static String emailUser;
 
     // The saved result from {@link #onConnectionFailed(ConnectionResult)}.  If a connection
     // attempt has been made, this is non-null.
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
 
-    private Intent intentInfosUsersAcrivity;
+    private Intent loginActivity;
 
     /**
      * Called when the {@link PlusClient} revokes access to this app.
@@ -82,7 +80,7 @@ public abstract class PlusBaseActivity extends Activity
                 new PlusClient.Builder(this, this, this).setScopes(Scopes.PLUS_LOGIN,
                         Scopes.PLUS_ME).build();
 
-        intentInfosUsersAcrivity = new Intent(this, InfosUserActivity.class);
+        loginActivity = new Intent(this, LoginActivity.class);
     }
 
     /**
@@ -247,8 +245,8 @@ public abstract class PlusBaseActivity extends Activity
         updateConnectButtonState();
         setProgressBarVisible(false);
         onPlusClientSignIn();
-        //Toast.makeText(getApplicationContext(), "Login successful!", Toast.LENGTH_SHORT).show();
-        //startActivity(intentInfosUsersAcrivity);
+
+        emailUser = mPlusClient.getAccountName();
     }
 
     /**
@@ -284,8 +282,30 @@ public abstract class PlusBaseActivity extends Activity
         }
     }
 
-    public PlusClient getPlusClient() {
+
+    public  PlusClient getPlusClient() {
         return mPlusClient;
     }
 
+
+    /*
+    * Author : Vincent Pont
+    * Class to get the email address of the user google account
+    *
+    */
+
+    public static class ClassIntern
+    {
+        private String emailUserInter;
+
+        public ClassIntern()
+        {
+            emailUserInter  = emailUser;
+        }
+        public String getEmailUser() {
+            return emailUserInter;
+        }
+    }
+
 }
+

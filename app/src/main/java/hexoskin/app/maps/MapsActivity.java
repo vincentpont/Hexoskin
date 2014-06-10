@@ -55,7 +55,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private DecimalFormat decimalformatTwo = new DecimalFormat();
     private LatLng actualPosition;
     private Location locations;
-    private Location locationWhenStopped;
     private LocationManager locationManager;
     private List<Double> listLat = new ArrayList<Double>();
     private List<Double> listLong = new ArrayList<Double>();
@@ -69,7 +68,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private TextView distanceView;
     private TextView avgMeterMinView;
     private String caloriesBurned ;
-    private String provider;
+    private String bestProvider;
     private String sexe;
 
 
@@ -96,7 +95,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         buttonPause = (ImageButton) findViewById(R.id.buttonPause);
         buttonStop = (ImageButton) findViewById(R.id.buttonStop);
 
-
         // Add listener
         buttonPlay.setOnClickListener(this);
         buttonStop.setOnClickListener(this);
@@ -113,6 +111,23 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         }
 
 
+        // Get the location manager
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        bestProvider = locationManager.getBestProvider(criteria, false);
+        locations = locationManager.getLastKnownLocation(bestProvider);
+
+
+        // If we have an older location
+        if (locations != null) {
+            longitude = locations.getLongitude();
+            latitude = locations.getLatitude();
+        }
+
+        // Create map
+        setUpMapIfNeeded();
+
+        Toast.makeText(getApplicationContext(), "Before launch, wait until your location is good.", Toast.LENGTH_LONG).show();
 
             // Chronometer listener
             chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
@@ -159,26 +174,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                     }
              });
 
-            // Get info from GPS
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-            //Get the best provider based on Accuracy, power consumption, response, bearing and monetary cost
-            Criteria c = new Criteria();
-            provider = locationManager.getBestProvider(c, false);
-
-            locations = locationManager.getLastKnownLocation(provider);
-
-            // If we have an older location
-            if (locations != null) {
-                longitude = locations.getLongitude();
-                latitude = locations.getLatitude();
-            }
-
-            // Create map
-            setUpMapIfNeeded();
-
-            Toast.makeText(getApplicationContext(), "Before launch, wait until your location is good.", Toast.LENGTH_LONG).show();
-
     }
 
     // Button during workout play/pause stop
@@ -188,7 +183,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 buttonPlay.setEnabled(false);
 
                 // Launch listener GPS, 2000 = time until update, 2 = meter until update
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 2, locationListener);
+                locationManager.requestLocationUpdates(bestProvider, 1000, 2, locationListener);
 
                 chronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
                 chronometer.start();
@@ -203,11 +198,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 chronometer.stop();
 
                 // Save last location
-                locationWhenStopped = locationManager.getLastKnownLocation(provider);
-                locations = locationWhenStopped;
+                locations = locationManager.getLastKnownLocation(bestProvider);
 
                 // Stop GPS listener
                 locationManager.removeUpdates(locationListener);
+
                 break;
 
             case R.id.buttonStop:
@@ -220,7 +215,9 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 Toast.makeText(getApplicationContext(), "Workout finish.", Toast.LENGTH_LONG).show();
 
                 // Add finish marker
-                mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(listLat.size()-1), listLong.get(listLong.size()-1))).title("Finish"));
+                if(listLat.size() > 0) {
+                    mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(listLat.size() - 1), listLong.get(listLong.size() - 1))).title("Finish"));
+                }
 
                 // Pass the values for resume seance
                 resumeSeance.putExtra("Duration", chronometer.getText().toString());
@@ -235,12 +232,14 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
+        //locationManager.requestLocationUpdates(bestProvider, 1000, 2, locationListener);
         setUpMapIfNeeded();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        //locationManager.removeUpdates(locationListener);
     }
 
     @Override
@@ -333,7 +332,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             longitude = location.getLongitude();
             latitude = location.getLatitude();
 
-            //Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Distance " +distance + "SizeList "+ listLat.size(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Distance " +distance, Toast.LENGTH_SHORT).show();
 
             // Add to the list the new Lat & Long
             listLat.add(latitude);
