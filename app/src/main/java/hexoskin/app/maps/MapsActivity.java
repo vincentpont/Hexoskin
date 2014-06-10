@@ -122,10 +122,16 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         if (locations != null) {
             longitude = locations.getLongitude();
             latitude = locations.getLatitude();
+            actualPosition = new LatLng(latitude,longitude);
         }
 
         // Create map
         setUpMapIfNeeded();
+
+        // Move camera
+        if(actualPosition!=null){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
+        }
 
         Toast.makeText(getApplicationContext(), "Before launch, wait until your location is good.", Toast.LENGTH_LONG).show();
 
