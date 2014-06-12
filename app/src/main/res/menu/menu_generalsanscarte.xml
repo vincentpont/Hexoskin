@@ -7,11 +7,7 @@
         android:orderInCategory="1"
         android:showAsAction="always"
         android:title="New training"/>
-    <item
-        android:id="@+id/menu_carte"
-        android:orderInCategory="2"
-        android:showAsAction="always"
-        android:title="Carte"/>
+
 
 
 </menu>

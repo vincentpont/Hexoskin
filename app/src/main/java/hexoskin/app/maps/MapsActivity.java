@@ -1,43 +1,39 @@
 package hexoskin.app.maps;
 
-import android.app.Dialog;
-import android.content.Context;
+
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
+
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hexoskin.app.R;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
-import org.w3c.dom.Text;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.seance.ResumeSeanceActivity;
 
 
@@ -70,6 +66,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private String caloriesBurned ;
     private String bestProvider;
     private String sexe;
+    private Intent intentInfos;
+    private Intent intentMaps;
 
 
     @Override
@@ -77,14 +75,20 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        intentInfos = new Intent(this, InfosUserActivity.class);
+        intentMaps = new Intent(this, MapsActivity.class);
+
         // Set decimal 2 for distance
         decimalformatTwo.setMaximumFractionDigits(2);
 
         // Get extras from intentInfo
         Bundle extras = getIntent().getExtras();
-        sexe = extras.getString("Sexe");
-        poids = Integer.parseInt(extras.getString("Poids"));
-        age = Integer.parseInt(extras.getString("Age"));
+        if(extras != null) {
+            sexe = extras.getString("Sexe");
+            poids = Integer.parseInt(extras.getString("Poids"));
+            age = Integer.parseInt(extras.getString("Age"));
+        }
+
 
         resumeSeance = new Intent(this, ResumeSeanceActivity.class);
         chronometer = (Chronometer) findViewById(R.id.chronometer);
@@ -187,6 +191,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         switch(v.getId()) {
             case R.id.buttonPlay:
                 buttonPlay.setEnabled(false);
+                buttonPause.setEnabled(true);
 
                 // Launch listener GPS, 2000 = time until update, 2 = meter until update
                 locationManager.requestLocationUpdates(bestProvider, 1000, 2, locationListener);
@@ -197,6 +202,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 break;
 
             case R.id.buttonPause:
+                buttonPause.setEnabled(false);
                 buttonPlay.setEnabled(true);
 
                 // Save the chronometer
@@ -212,6 +218,10 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 break;
 
             case R.id.buttonStop:
+                buttonStop.setEnabled(false);
+                buttonPlay.setEnabled(false);
+                buttonPause.setEnabled(false);
+
                 // Close GPS activity and chronometer
                 chronometer.stop();
                 locationManager.removeUpdates(locationListener);
@@ -232,6 +242,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 resumeSeance.putExtra("AvgMeterKm",avgMeterMinView.getText());
                 startActivity(resumeSeance);
                 break;
+
+
         }
     }
 
@@ -337,8 +349,22 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             locations = location;
             longitude = location.getLongitude();
             latitude = location.getLatitude();
+            //Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Distance " +distance, Toast.LENGTH_SHORT).show();
 
-            Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Distance " +distance, Toast.LENGTH_SHORT).show();
+            // Get altitude
+            double altitude = locations.getAltitude();
+            String altitudes = String.valueOf(altitude);
+            //Toast.makeText(getApplicationContext(), "Altitude :" +altitudes, Toast.LENGTH_SHORT).show();
+
+            // calcule vitesse
+            double timeVitesse = (double) chronometer.getBase()*3.6;
+            double distanceVitesse = (double) distance*3.6 ;
+
+            double vitesse = distanceVitesse/timeVitesse;
+
+            //String vitesses = decimalformatTwo.format(vitesseDouble);
+            Toast.makeText(getApplicationContext(), "Vitesse :" +vitesse +"km/h", Toast.LENGTH_SHORT).show();
+
 
             // Add to the list the new Lat & Long
             listLat.add(latitude);
@@ -382,4 +408,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         public void onProviderDisabled(String s) {
         }
     };
+
+
 }

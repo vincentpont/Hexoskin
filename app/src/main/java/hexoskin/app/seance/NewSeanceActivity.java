@@ -23,10 +23,8 @@ public class NewSeanceActivity extends Activity {
 
     private ImageButton buttonEnableGPS ;
     private Button buttonStart ;
-    private Boolean isGPSEnable;
     private Intent intentInfos;
     private Intent intentMaps;
-    private Intent intentNewSeance;
     private ListView listViewHistory;
 
     @Override
@@ -36,7 +34,6 @@ public class NewSeanceActivity extends Activity {
 
         intentInfos = new Intent(this, InfosUserActivity.class);
         intentMaps = new Intent(this, MapsActivity.class);
-        intentNewSeance = new Intent(this, NewSeanceActivity.class);
 
         buttonEnableGPS = (ImageButton) findViewById(R.id.buttonEnableGPS);
         buttonStart = (Button) findViewById(R.id.buttonStart);
@@ -113,7 +110,7 @@ public class NewSeanceActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_general, menu);
+        getMenuInflater().inflate(R.menu.menu_generalsanscarte, menu);
         return true;
     }
 
@@ -124,11 +121,8 @@ public class NewSeanceActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
 
         switch (item.getItemId()) {
-            case R.id.menu_start:
+            case R.id.menu_newtraining:
                 startActivity(intentInfos);
-                return true;
-            case R.id.menu_training:
-                startActivity(intentNewSeance);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
