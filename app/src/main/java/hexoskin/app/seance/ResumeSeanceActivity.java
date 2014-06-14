@@ -14,11 +14,15 @@ import android.widget.Toast;
 
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutData;
+import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutListLatitude;
+
 import com.example.hexoskin.app.R;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.apiGoogle.AppConstants;
@@ -33,6 +37,7 @@ public class ResumeSeanceActivity extends Activity {
     private TextView caloriesView;
     private TextView distanceView;
     private TextView avgMeterMinView;
+    private TextView textViewDate;
     private Intent intentInfos;
     private String calorieBurnedExtras;
     private String distanceExtras;
@@ -40,6 +45,8 @@ public class ResumeSeanceActivity extends Activity {
     private ImageButton imageButtonSave;
     private ImageButton imageButtonDelete;
     private AsyncTask<Void, Void, PutData> putData;
+    private AsyncTask<Void, Void, PutListLatitude> putListLatitude;
+    private List<String> listStringLat = new ArrayList<String>();
     private String emailUser;
     private Date date = new Date();
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
@@ -54,16 +61,20 @@ public class ResumeSeanceActivity extends Activity {
         intentInfos = new Intent(this, InfosUserActivity.class);
         intentMaps = new Intent(this, MapsActivity.class);
 
+
+
         // Call class intern and get userEmail
         PlusBaseActivity.ClassIntern ca = new PlusBaseActivity.ClassIntern();
         emailUser = ca.getEmailUser();
 
-
         Bundle extras = getIntent().getExtras();
-        durationExtras = extras.getString("Duration");
-        calorieBurnedExtras = extras.getString("CaloriesBurned");
-        distanceExtras = extras.getString("Distance");
-        avgMeterMinExtras = extras.getString("AvgMeterKm");
+        if(extras != null) {
+            durationExtras = extras.getString("Duration");
+            calorieBurnedExtras = extras.getString("CaloriesBurned");
+            distanceExtras = extras.getString("Distance");
+            avgMeterMinExtras = extras.getString("AvgMeterKm");
+            listStringLat = extras.getStringArrayList("listStringLat");
+        }
 
         durationView = (TextView) findViewById(R.id.textViewDurationResume);
         caloriesView = (TextView) findViewById(R.id.textViewCaloriesBurnedResume);
@@ -71,19 +82,21 @@ public class ResumeSeanceActivity extends Activity {
         avgMeterMinView = (TextView) findViewById(R.id.textAvgMeterMinResume);
         imageButtonSave = (ImageButton) findViewById(R.id.imageButtonSave);
         imageButtonDelete = (ImageButton) findViewById(R.id.imageButtonDelete);
+        textViewDate = (TextView) findViewById(R.id.textViewDate);
+        textViewDate.setText(sdf.format(date));
 
-
-        putData = new AsyncTask<Void, Void, Helloworld.Greetings.PutData> () {
+        // Put base data in datastore
+        putData = new AsyncTask<Void, Void, PutData> () {
 
             @Override
-            protected Helloworld.Greetings.PutData doInBackground(Void... voids) {
+            protected PutData doInBackground(Void... voids) {
 
                 // Retrieve service handle.
                 Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
 
                 try {
                     // Call the api method and pass the values to save the data
-                    Helloworld.Greetings.PutData putDataInStore = apiServiceHandle.greetings()
+                    PutData putDataInStore = apiServiceHandle.greetings()
                             .putData(sdf.format(date),
                                     emailUser,
                                     distanceView.getText().toString(),
@@ -91,8 +104,6 @@ public class ResumeSeanceActivity extends Activity {
                                     caloriesView.getText().toString(),
                                     avgMeterMinView.getText().toString()
                             );
-
-
                     putDataInStore.execute();
 
                 } catch (IOException e) {
@@ -100,7 +111,29 @@ public class ResumeSeanceActivity extends Activity {
                 }
                 return null;
             }
+        };
 
+        // Put list of latitude in datastore
+        putListLatitude = new AsyncTask<Void, Void, PutListLatitude> () {
+
+            @Override
+            protected PutListLatitude doInBackground(Void... voids) {
+
+                // Retrieve service handle.
+                Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
+
+                try {
+                    // Call the api method and pass the values to save the data
+                    PutListLatitude putlistLat = apiServiceHandle.greetings()
+                            .putListLatitude(emailUser,sdf.format(date), listStringLat);
+
+                    putlistLat.execute();
+
+                } catch (IOException e) {
+                    Log.e("Error", e.toString());
+                }
+                return null;
+            }
         };
 
 
@@ -109,7 +142,12 @@ public class ResumeSeanceActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+
+                // Put data in datastore
                 putData.execute();
+
+                putListLatitude.execute();
+
                 Toast.makeText(getApplicationContext(), "Seance saved.", Toast.LENGTH_SHORT).show();
                 startActivity(intentInfos);
             }

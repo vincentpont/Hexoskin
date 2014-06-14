@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="28.05.2014"
+                android:text=""
                 android:id="@+id/textViewDate"
                 android:layout_column="4"
                 android:textSize="22dp" />
