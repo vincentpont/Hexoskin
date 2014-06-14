@@ -34,7 +34,6 @@ public class ResumeSeanceActivity extends Activity {
     private TextView distanceView;
     private TextView avgMeterMinView;
     private Intent intentInfos;
-    private Intent intentNewSeance;
     private String calorieBurnedExtras;
     private String distanceExtras;
     private String avgMeterMinExtras;
@@ -53,7 +52,6 @@ public class ResumeSeanceActivity extends Activity {
         setContentView(R.layout.activity_resume_seance);
 
         intentInfos = new Intent(this, InfosUserActivity.class);
-        intentNewSeance = new Intent(this, NewSeanceActivity.class);
         intentMaps = new Intent(this, MapsActivity.class);
 
         // Call class intern and get userEmail
@@ -73,9 +71,6 @@ public class ResumeSeanceActivity extends Activity {
         avgMeterMinView = (TextView) findViewById(R.id.textAvgMeterMinResume);
         imageButtonSave = (ImageButton) findViewById(R.id.imageButtonSave);
         imageButtonDelete = (ImageButton) findViewById(R.id.imageButtonDelete);
-
-
-
 
 
         putData = new AsyncTask<Void, Void, Helloworld.Greetings.PutData> () {

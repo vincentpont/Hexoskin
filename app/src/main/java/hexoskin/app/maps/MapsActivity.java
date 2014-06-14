@@ -3,22 +3,25 @@ package hexoskin.app.maps;
 
 import android.content.Intent;
 import android.graphics.Color;
-
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.provider.SyncStateContract;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import com.appspot.logical_light_564.helloworld.Helloworld;
+import com.appspot.logical_light_564.helloworld.Helloworld.Greetings;
 
 import com.example.hexoskin.app.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,11 +32,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
-import hexoskin.app.info.InfosUserActivity;
+import hexoskin.app.apiGoogle.AppConstants;
+import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.seance.ResumeSeanceActivity;
 
 
@@ -53,6 +61,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private Location locations;
     private LocationManager locationManager;
     private List<Double> listLat = new ArrayList<Double>();
+    private List<String> listStringLat = new ArrayList<String>();
     private List<Double> listLong = new ArrayList<Double>();
     private PolylineOptions rectOptions = new PolylineOptions().width(10).color(Color.MAGENTA);
     private ImageButton buttonPlay;
@@ -66,8 +75,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private String caloriesBurned ;
     private String bestProvider;
     private String sexe;
-    private Intent intentInfos;
-    private Intent intentMaps;
+    private String emailUser;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+    private Date date = new Date();
+
+    private AsyncTask<Void, Void, Greetings.PutListLatitude> putData;
 
 
     @Override
@@ -75,8 +87,38 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        intentInfos = new Intent(this, InfosUserActivity.class);
-        intentMaps = new Intent(this, MapsActivity.class);
+        // Call class intern and get userEmail
+        PlusBaseActivity.ClassIntern ca = new PlusBaseActivity.ClassIntern();
+        emailUser = ca.getEmailUser();
+
+        putData = new AsyncTask<Void, Void, Greetings.PutListLatitude> () {
+
+            @Override
+            protected Greetings.PutListLatitude doInBackground(Void... voids) {
+
+                // Transformation de la liste en double -> String pour datastore
+                for(double d : listLat){
+                    listStringLat.add(String.valueOf(d));
+                }
+                Log.e("Size liste :", String.valueOf(listStringLat.size()));
+                // Retrieve service handle.
+                Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
+
+                try {
+                    // Call the api method and pass the values to save the data
+                    Helloworld.Greetings.PutListLatitude putlistLat = apiServiceHandle.greetings()
+                            .putListLatitude(emailUser,sdf.format(date), listStringLat);
+
+
+                    putlistLat.execute();
+
+                } catch (IOException e) {
+                    Log.e("Error", e.toString());
+                }
+                return null;
+            }
+
+        };
 
         // Set decimal 2 for distance
         decimalformatTwo.setMaximumFractionDigits(2);
@@ -234,6 +276,9 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 if(listLat.size() > 0) {
                     mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(listLat.size() - 1), listLong.get(listLong.size() - 1))).title("Finish"));
                 }
+
+                // TEST LIST METHODE API GOOGLE
+                putData.execute();
 
                 // Pass the values for resume seance
                 resumeSeance.putExtra("Duration", chronometer.getText().toString());
