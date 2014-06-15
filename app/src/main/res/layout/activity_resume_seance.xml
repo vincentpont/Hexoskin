@@ -25,7 +25,7 @@
                 android:text="Résumé séance du "
                 android:id="@+id/textViewDateResume"
                 android:layout_column="0"
-                android:textSize="22dp"
+                android:textSize="19dp"
                 android:height="60dp"
                 android:textIsSelectable="false" />
 
@@ -35,7 +35,7 @@
                 android:text=""
                 android:id="@+id/textViewDate"
                 android:layout_column="4"
-                android:textSize="22dp" />
+                android:textSize="18dp" />
         </TableRow>
 
         <TableRow
@@ -126,6 +126,29 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textAvgMeterMinResume"
                 android:text="0 min"
+                android:layout_column="4"
+                android:height="30dp"
+                android:textSize="18dp"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView8"
+                android:layout_column="0"
+                android:height="30dp"
+                android:text="Speed"
+                android:textSize="18dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewSpeedResume"
+                android:text="0 km/h"
                 android:layout_column="4"
                 android:height="30dp"
                 android:textSize="18dp"/>

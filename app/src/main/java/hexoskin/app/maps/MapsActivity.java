@@ -35,8 +35,12 @@ import hexoskin.app.seance.ResumeSeanceActivity;
 public class MapsActivity extends FragmentActivity implements View.OnClickListener{
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private String caloriesBurned ;
+    private String bestProvider;
+    private String sexe;
     private double latitude;
     private double longitude;
+    private double altitude;
     private float distance ;
     private float distanceMeterMin;
     private long timeWhenStopped = 0;
@@ -50,6 +54,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private List<Double> listLat = new ArrayList<Double>();
     private List<String> listStringLat = new ArrayList<String>();
     private List<Double> listLong = new ArrayList<Double>();
+    private List<String> listStringLong = new ArrayList<String>();
+    private List<Double> listAltitude = new ArrayList<Double>();
+    private List<String> listStringAlti = new ArrayList<String>();
+    private List<Double> listSpeed = new ArrayList<Double>();
+    private List<String> listStringSpeed = new ArrayList<String>();
     private PolylineOptions rectOptions = new PolylineOptions().width(10).color(Color.MAGENTA);
     private ImageButton buttonPlay;
     private ImageButton buttonPause;
@@ -59,10 +68,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private TextView caloriesBurnedView;
     private TextView distanceView;
     private TextView avgMeterMinView;
-    private String caloriesBurned ;
-    private String bestProvider;
-    private String sexe;
-
+    private TextView speedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +92,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         caloriesBurnedView = (TextView) findViewById(R.id.textViewCaloriesBurnedMaps);
         distanceView = (TextView) findViewById(R.id.textViewDistance);
         avgMeterMinView = (TextView) findViewById(R.id.textViewMoyMinKm);
+        speedView = (TextView) findViewById(R.id.textViewSpeed);
         buttonPlay = (ImageButton) findViewById(R.id.buttonPlay);
         buttonPause = (ImageButton) findViewById(R.id.buttonPause);
         buttonStop = (ImageButton) findViewById(R.id.buttonStop);
@@ -105,13 +112,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             startActivity(i);
         }
 
-
         // Get the location manager
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         bestProvider = locationManager.getBestProvider(criteria, false);
         locations = locationManager.getLastKnownLocation(bestProvider);
-
 
         // If we have an older location
         if (locations != null) {
@@ -226,21 +231,33 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                     mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(listLat.size() - 1), listLong.get(listLong.size() - 1))).title("Finish"));
                 }
 
+                // Transformation de la liste en double -> pour passer dans l'intent + datastore
+                for(double d : listLat){
+                    listStringLat.add(String.valueOf(d));
+                }
+                for(double d : listLong){
+                    listStringLong.add(String.valueOf(d));
+                }
+                for(double d : listSpeed){
+                    listStringSpeed.add(String.valueOf(d));
+                }
+                for(double d : listAltitude){
+                    listStringAlti.add(String.valueOf(d));
+                }
+
                 // Pass the values for resume seance
+                resumeSeance.putStringArrayListExtra("listStringLat", (ArrayList<String>) listStringLat);
+                resumeSeance.putStringArrayListExtra("listStringLong", (ArrayList<String>) listStringLong);
+                resumeSeance.putStringArrayListExtra("listStringSpeed", (ArrayList<String>) listStringSpeed);
+                resumeSeance.putStringArrayListExtra("listStringAlti", (ArrayList<String>) listStringAlti);
                 resumeSeance.putExtra("Duration", chronometer.getText().toString());
                 resumeSeance.putExtra("CaloriesBurned", caloriesBurnedView.getText());
                 resumeSeance.putExtra("Distance", distanceView.getText());
                 resumeSeance.putExtra("AvgMeterKm",avgMeterMinView.getText());
+                resumeSeance.putExtra("Speed",speedView.getText());
 
-                // Transformation de la liste en double -> String pour datastore
-                for(double d : listLat){
-                    listStringLat.add(String.valueOf(d));
-                }
-                resumeSeance.putStringArrayListExtra("listStringLat", (ArrayList<String>) listStringLat);
                 startActivity(resumeSeance);
                 break;
-
-
         }
     }
 
@@ -261,7 +278,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     protected void onDestroy() {
         super.onDestroy();
     }
-
 
     // Method that test is GPS is enable or not
     private Boolean testGPSEnable(){
@@ -285,15 +301,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-
     // Add attributes to the maps (location, markers)
     private void setUpMap() {
         mMap.setMyLocationEnabled(true);
         actualPosition = new LatLng(latitude,longitude);
-
-        //Toast.makeText(getApplicationContext(), "lat :" +latitude +" long: " +longitude, Toast.LENGTH_LONG).show();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
-
     }
 
     //Calculate distance between two points
@@ -340,32 +352,24 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         return Double.parseDouble(decimalformatTwo.format(calorieBurnedWomen));
     }
 
+    public String calculateSpeed(){
+
+        double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
+        double timeVitesse = elapsedMillis/1000; // Divide by 1000 for second
+        double distanceVitesse = (double) distance ;
+        double vitesse = distanceVitesse/timeVitesse;
+        vitesse = vitesse *3.60; // for km/h
+        String vitesses = decimalformatTwo.format(vitesse);
+
+        return vitesses;
+    }
+
 
     public LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
+
             locations = location;
             longitude = location.getLongitude();
-            latitude = location.getLatitude();
-            //Toast.makeText(getApplicationContext(), "NEWS! lat :" +latitude +" long: " +longitude + "Distance " +distance, Toast.LENGTH_SHORT).show();
-
-            // Get altitude
-            double altitude = locations.getAltitude();
-            String altitudes = String.valueOf(altitude);
-            //Toast.makeText(getApplicationContext(), "Altitude :" +altitudes, Toast.LENGTH_SHORT).show();
-
-            // calcule vitesse
-            double timeVitesse = (double) chronometer.getBase()*3.6;
-            double distanceVitesse = (double) distance*3.6 ;
-
-            double vitesse = distanceVitesse/timeVitesse;
-
-            //String vitesses = decimalformatTwo.format(vitesseDouble);
-            Toast.makeText(getApplicationContext(), "Vitesse :" +vitesse +"km/h", Toast.LENGTH_SHORT).show();
-
-
-            // Add to the list the new Lat & Long
-            listLat.add(latitude);
-            listLong.add(longitude);
 
             // Add marker start, only one time
             if(listLat.size() == 1) {
@@ -376,6 +380,23 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             rectOptions.add(new LatLng(latitude, longitude));
             mMap.addPolyline(rectOptions);
 
+            // Add to the list the new Lat & Long
+            listLat.add(latitude);
+            listLong.add(longitude);
+
+            // Get altitude
+            altitude = locations.getAltitude();
+            listAltitude.add(altitude);
+
+            // Add speed to the list
+            listSpeed.add(Double.parseDouble(calculateSpeed()));
+
+            // Update speed view
+            speedView.setText(calculateSpeed()+ " km/h");
+
+            // UPDATE textViews DISTANCE
+            distanceView.setText(calculateDistance() +" m");
+
             // UPDATE textViews CALORIES, and check if women or men
             if(sexe.toString().equals("femme")){
                 caloriesBurned = String.valueOf(calculateCaloriesWomen());
@@ -385,12 +406,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 caloriesBurned = String.valueOf(calculateCaloriesMen());
                 caloriesBurnedView.setText(caloriesBurned + " calories");
             }
-
-            // UPDATE textViews DISTANCE
-            distanceView.setText(calculateDistance() +" m");
-
-
-
         }
 
         @Override

@@ -105,6 +105,33 @@
         </TableRow>
 
         <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#805882FA">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView7"
+            android:layout_column="0"
+            android:height="30dp"
+            android:text="Avg. meter/min"
+            android:textSize="18dp"
+            android:paddingLeft="10dp"
+            android:textColor="#000000"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewMoyMinKm"
+            android:text="0 min"
+            android:layout_column="2"
+            android:height="30dp"
+            android:textSize="18dp"
+            android:textColor="#000000"/>
+    </TableRow>
+
+        <TableRow
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="#805882FA">
@@ -112,10 +139,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView7"
+                android:id="@+id/textView8"
                 android:layout_column="0"
                 android:height="30dp"
-                android:text="Avg. meter/min"
+                android:text="Speed"
                 android:textSize="18dp"
                 android:paddingLeft="10dp"
                 android:textColor="#000000"/>
@@ -123,8 +150,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textViewMoyMinKm"
-                android:text="0 min"
+                android:id="@+id/textViewSpeed"
+                android:text="0 km/h"
                 android:layout_column="2"
                 android:height="30dp"
                 android:textSize="18dp"

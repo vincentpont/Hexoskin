@@ -13,8 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appspot.logical_light_564.helloworld.Helloworld;
-import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutData;
-import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutListLatitude;
+import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataSeance;
+import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataMap;
 
 import com.example.hexoskin.app.R;
 
@@ -38,18 +38,24 @@ public class ResumeSeanceActivity extends Activity {
     private TextView distanceView;
     private TextView avgMeterMinView;
     private TextView textViewDate;
+    private TextView speedView;
     private Intent intentInfos;
     private String calorieBurnedExtras;
     private String distanceExtras;
     private String avgMeterMinExtras;
+    private String speedExtras;
+    private String emailUser;
     private ImageButton imageButtonSave;
     private ImageButton imageButtonDelete;
-    private AsyncTask<Void, Void, PutData> putData;
-    private AsyncTask<Void, Void, PutListLatitude> putListLatitude;
+    private AsyncTask<Void, Void, PutDataSeance> putDataSeance;
+    private AsyncTask<Void, Void, PutDataMap> putDataMap;
     private List<String> listStringLat = new ArrayList<String>();
-    private String emailUser;
+    private List<String> listStringLong = new ArrayList<String>();
+    private List<String> listStringAlti = new ArrayList<String>();
+    private List<String> listStringSpeed = new ArrayList<String>();
     private Date date = new Date();
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+    private SimpleDateFormat sdfDataStore = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+    private SimpleDateFormat sdfView = new SimpleDateFormat("yyyy/MM/dd");
     private Intent intentMaps;
 
 
@@ -61,8 +67,6 @@ public class ResumeSeanceActivity extends Activity {
         intentInfos = new Intent(this, InfosUserActivity.class);
         intentMaps = new Intent(this, MapsActivity.class);
 
-
-
         // Call class intern and get userEmail
         PlusBaseActivity.ClassIntern ca = new PlusBaseActivity.ClassIntern();
         emailUser = ca.getEmailUser();
@@ -73,7 +77,11 @@ public class ResumeSeanceActivity extends Activity {
             calorieBurnedExtras = extras.getString("CaloriesBurned");
             distanceExtras = extras.getString("Distance");
             avgMeterMinExtras = extras.getString("AvgMeterKm");
+            speedExtras = extras.getString("Speed");
             listStringLat = extras.getStringArrayList("listStringLat");
+            listStringLong = extras.getStringArrayList("listStringLong");
+            listStringAlti = extras.getStringArrayList("listStringAlti");
+            listStringSpeed = extras.getStringArrayList("listStringSpeed");
         }
 
         durationView = (TextView) findViewById(R.id.textViewDurationResume);
@@ -83,21 +91,31 @@ public class ResumeSeanceActivity extends Activity {
         imageButtonSave = (ImageButton) findViewById(R.id.imageButtonSave);
         imageButtonDelete = (ImageButton) findViewById(R.id.imageButtonDelete);
         textViewDate = (TextView) findViewById(R.id.textViewDate);
-        textViewDate.setText(sdf.format(date));
+        speedView = (TextView) findViewById((R.id.textViewSpeedResume));
+        textViewDate.setText(sdfView.format(date));
 
-        // Put base data in datastore
-        putData = new AsyncTask<Void, Void, PutData> () {
+        // Set the TextViews
+        if(extras != null) {
+            caloriesView.setText(calorieBurnedExtras);
+            distanceView.setText(distanceExtras);
+            durationView.setText(durationExtras);
+            avgMeterMinView.setText(avgMeterMinExtras);
+            speedView.setText(speedExtras);
+        }
+
+        // Put base data in Datastore
+        putDataSeance = new AsyncTask<Void, Void, PutDataSeance> () {
 
             @Override
-            protected PutData doInBackground(Void... voids) {
+            protected PutDataSeance doInBackground(Void... voids) {
 
                 // Retrieve service handle.
                 Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
 
                 try {
                     // Call the api method and pass the values to save the data
-                    PutData putDataInStore = apiServiceHandle.greetings()
-                            .putData(sdf.format(date),
+                    PutDataSeance putDataInStore = apiServiceHandle.greetings()
+                            .putDataSeance(sdfDataStore.format(date),
                                     emailUser,
                                     distanceView.getText().toString(),
                                     durationView.getText().toString(),
@@ -113,19 +131,20 @@ public class ResumeSeanceActivity extends Activity {
             }
         };
 
-        // Put list of latitude in datastore
-        putListLatitude = new AsyncTask<Void, Void, PutListLatitude> () {
+        // Put map data in Datastore
+        putDataMap = new AsyncTask<Void, Void, PutDataMap> () {
 
             @Override
-            protected PutListLatitude doInBackground(Void... voids) {
+            protected PutDataMap doInBackground(Void... voids) {
 
                 // Retrieve service handle.
                 Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
 
                 try {
                     // Call the api method and pass the values to save the data
-                    PutListLatitude putlistLat = apiServiceHandle.greetings()
-                            .putListLatitude(emailUser,sdf.format(date), listStringLat);
+                    PutDataMap putlistLat = apiServiceHandle.greetings()
+                            .putDataMap(emailUser,sdfDataStore.format(date), listStringLat,
+                                    listStringLong, listStringAlti, listStringSpeed);
 
                     putlistLat.execute();
 
@@ -136,7 +155,6 @@ public class ResumeSeanceActivity extends Activity {
             }
         };
 
-
         // Listener save data in DataStore
         imageButtonSave.setOnClickListener(new View.OnClickListener() {
 
@@ -144,10 +162,8 @@ public class ResumeSeanceActivity extends Activity {
             public void onClick(View v) {
 
                 // Put data in datastore
-                putData.execute();
-
-                putListLatitude.execute();
-
+                putDataSeance.execute();
+                putDataMap.execute();
                 Toast.makeText(getApplicationContext(), "Seance saved.", Toast.LENGTH_SHORT).show();
                 startActivity(intentInfos);
             }
@@ -162,26 +178,6 @@ public class ResumeSeanceActivity extends Activity {
                 startActivity(intentInfos);
             }
         });
-
-
-
-        // Set the TextViews
-        if(calorieBurnedExtras != null) {
-            caloriesView.setText(calorieBurnedExtras);
-        }
-
-        if(distanceExtras != null) {
-            distanceView.setText(distanceExtras);
-        }
-
-        if(durationExtras != null) {
-            durationView.setText(durationExtras);
-        }
-
-        if(avgMeterMinExtras != null){
-            avgMeterMinView.setText(avgMeterMinExtras);
-        }
-
     }
 
 
