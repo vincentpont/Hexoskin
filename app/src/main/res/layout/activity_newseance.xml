@@ -109,32 +109,5 @@
                 android:height="40dp" />
         </TableRow>
 
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Last workout"
-                android:id="@+id/textView22"
-                android:layout_column="0"
-                android:textSize="22dp"
-                android:height="50dp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/listViewHistory"
-                android:layout_column="0"
-                android:scrollingCache="true"
-                android:entries="@array/arrayLastWorkout" />
-        </TableRow>
-
     </TableLayout>
 </RelativeLayout>

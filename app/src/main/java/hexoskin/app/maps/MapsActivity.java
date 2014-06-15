@@ -190,7 +190,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 buttonPause.setEnabled(true);
 
                 // Launch listener GPS, 2000 = time until update, 2 = meter until update
-                locationManager.requestLocationUpdates(bestProvider, 1000, 2, locationListener);
+                locationManager.requestLocationUpdates(bestProvider, 1500, 2, locationListener);
 
                 chronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
                 chronometer.start();
@@ -370,6 +370,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
             locations = location;
             longitude = location.getLongitude();
+            latitude = location.getLatitude();
 
             // Add marker start, only one time
             if(listLat.size() == 1) {

@@ -12,9 +12,6 @@
         <item>Homme</item>
         <item>Femme</item>
     </string-array>
-    <string-array name="arrayLastWorkout">
-        <item>Séance du 28.05.2014 </item>
-    </string-array>
 
     <string name="title_activity_resume_seance">resumeSeance</string>
     <string name="hello_world">Hello world!</string>
@@ -25,6 +22,5 @@
     <string name="toast_no_google_accounts_registered">No Google Accounts Registered</string>
     <string name="toast_only_one_google_account_registered">Your only registered Google account was
     selected </string>
-    <string name="title_activity_calibrate_gps">CalibrateGPSActivity</string>
 
 </resources>
