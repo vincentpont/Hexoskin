@@ -1,16 +1,17 @@
 package hexoskin.app.apiGoogle;
 
-
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 
-
 /**
- * Created by Vincent on 02.06.2014.
+ * Created by Vincent Pont
+ * Last Modification 17.06.2014
+ *
  */
+
 public class AppConstants {
     /**
      * Class instance of the JSON factory.

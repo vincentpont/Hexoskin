@@ -7,16 +7,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
-
 import com.example.hexoskin.app.R;
-
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.maps.MapsActivity;
+
+
+/**
+ * Created by Vincent Pont
+ * Last Modification 17.06.2014
+ *
+ */
 
 
 public class NewSeanceActivity extends Activity {

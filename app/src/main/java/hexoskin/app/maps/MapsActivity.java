@@ -6,7 +6,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -14,28 +13,29 @@ import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.hexoskin.app.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.seance.ResumeSeanceActivity;
 
+/**
+ * Created by Vincent Pont
+ * Last Modification 17.06.2014
+ *
+ */
 
 public class MapsActivity extends FragmentActivity implements View.OnClickListener{
 
@@ -76,6 +76,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private TextView speedView;
     private TextView textViewSearch;
     private ProgressBar progressBar ;
+    private TableLayout tableLayoutMaps ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
         // Set decimal 2 for distance
         decimalformatTwo.setMaximumFractionDigits(2);
+
 
         // Get extras from intentInfo
         Bundle extras = getIntent().getExtras();
@@ -105,9 +107,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         buttonStop = (ImageButton) findViewById(R.id.buttonStop);
         progressBar = (ProgressBar) findViewById(R.id.progressBar1);
         textViewSearch = (TextView) findViewById(R.id.textViewSearch);
+        tableLayoutMaps = (TableLayout) findViewById(R.id.tableLayoutMaps);
 
-        buttonPlay.setEnabled(false);
-        buttonStop.setEnabled(false);
 
         // Add listener
         buttonPlay.setOnClickListener(this);
@@ -120,7 +121,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             //Toast.makeText(getApplicationContext(), "GPS ON", Toast.LENGTH_SHORT).show();
         }
         else{
-            Toast.makeText(getApplicationContext(), "GPS OFF, Please turn on GPS.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "GPS OFF, Please turn on GPS.", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(i);
         }
@@ -147,7 +148,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
         }
 
-        Toast.makeText(getApplicationContext(), "Wait until GPS is calibrate.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Wait until GPS is calibrate.", Toast.LENGTH_SHORT).show();
 
             // Chronometer listener
             chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
@@ -202,7 +203,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.buttonPlay:
-                buttonPlay.setEnabled(false);
+                buttonPlay.setVisibility(View.GONE);
                 buttonPause.setEnabled(true);
 
                 // Launch listener GPS, 2000 = time until update, 2 = meter until update
@@ -215,7 +216,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
             case R.id.buttonPause:
                 buttonPause.setEnabled(false);
-                buttonPlay.setEnabled(true);
+                buttonPlay.setVisibility(View.VISIBLE);
 
                 // Save the chronometer
                 timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
@@ -240,7 +241,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 locationManager = null;
                 locations = null;
                 mMap.stopAnimation();
-                Toast.makeText(getApplicationContext(), "Workout finish.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Workout finish.", Toast.LENGTH_SHORT).show();
 
                 // Add finish marker
                 if(listLat.size() > 0) {
@@ -338,15 +339,17 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Accuracy:" + locations.getAccuracy(), Toast.LENGTH_LONG).show();
-                        buttonPlay.setEnabled(true);
-                        buttonStop.setEnabled(true);
+                        //Toast.makeText(getApplicationContext(), "Accuracy:" + locations.getAccuracy(), Toast.LENGTH_LONG).show();
+                        tableLayoutMaps.setVisibility(View.VISIBLE);
+                        buttonPlay.setVisibility(View.VISIBLE);
+                        buttonPause.setVisibility(View.VISIBLE);
+                        buttonStop.setVisibility(View.VISIBLE);
                         progressBar.setVisibility(View.GONE);
                         textViewSearch.setVisibility(View.GONE);
                     }
                 });
             }
-        }, 0, 500000); // End of your timer code.
+        }, 0, 999999999); // End of your timer code.
 
     }
 
@@ -456,11 +459,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             // UPDATE textViews CALORIES, and check if women or men
             if(sexe.toString().equals("femme")){
                 caloriesBurned = String.valueOf(calculateCaloriesWomen());
-                caloriesBurnedView.setText(caloriesBurned + " calories");
+                caloriesBurnedView.setText(caloriesBurned + " ca");
             }
             else{
                 caloriesBurned = String.valueOf(calculateCaloriesMen());
-                caloriesBurnedView.setText(caloriesBurned + " calories");
+                caloriesBurnedView.setText(caloriesBurned + " ca");
             }
         }
 

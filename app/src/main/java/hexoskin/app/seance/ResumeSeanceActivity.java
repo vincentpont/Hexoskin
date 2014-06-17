@@ -11,24 +11,25 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataSeance;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataMap;
-
 import com.example.hexoskin.app.R;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.apiGoogle.AppConstants;
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.maps.MapsActivity;
 
+/**
+ * Created by Vincent Pont
+ * Last Modification 17.06.2014
+ *
+ */
 
 public class ResumeSeanceActivity extends Activity {
 

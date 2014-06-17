@@ -3,15 +3,18 @@ package hexoskin.app.login;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-
 import android.app.Activity;
 import android.util.Log;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.plus.PlusClient;
 
+/**
+ * Created by Google modified by Vincent Pont
+ * Last Modification 17.06.2014
+ *
+ */
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
