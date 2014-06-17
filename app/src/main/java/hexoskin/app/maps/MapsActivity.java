@@ -6,12 +6,14 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +28,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.seance.ResumeSeanceActivity;
@@ -69,6 +74,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private TextView distanceView;
     private TextView avgMeterMinView;
     private TextView speedView;
+    private TextView textViewSearch;
+    private ProgressBar progressBar ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,11 +103,17 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         buttonPlay = (ImageButton) findViewById(R.id.buttonPlay);
         buttonPause = (ImageButton) findViewById(R.id.buttonPause);
         buttonStop = (ImageButton) findViewById(R.id.buttonStop);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar1);
+        textViewSearch = (TextView) findViewById(R.id.textViewSearch);
+
+        buttonPlay.setEnabled(false);
+        buttonStop.setEnabled(false);
 
         // Add listener
         buttonPlay.setOnClickListener(this);
         buttonStop.setOnClickListener(this);
         buttonPause.setOnClickListener(this);
+
 
         // Test if GPS is enable or not
         if(testGPSEnable() == true){
@@ -118,6 +131,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         bestProvider = locationManager.getBestProvider(criteria, false);
         locations = locationManager.getLastKnownLocation(bestProvider);
 
+
         // If we have an older location
         if (locations != null) {
             longitude = locations.getLongitude();
@@ -133,7 +147,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
         }
 
-        Toast.makeText(getApplicationContext(), "Before launch, wait until your location is good.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Wait until GPS is calibrate.", Toast.LENGTH_LONG).show();
 
             // Chronometer listener
             chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
@@ -179,6 +193,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                         }
                     }
              });
+
+                setPrgressBar();
 
     }
 
@@ -287,6 +303,56 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         return test;
     }
 
+    // Method to set the progressBar
+    public void setPrgressBar(){
+
+        Timer timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // Your logic here...
+
+                long t = Calendar.getInstance().getTimeInMillis();
+                // low is the number return by accuracy best is the signal
+                //&& Calendar.getInstance().getTimeInMillis() - t < 15000
+
+                while(Calendar.getInstance().getTimeInMillis() - t < 15000){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                while (locations.getAccuracy() >= 10) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // When you need to modify a UI element, do so on the UI thread.
+                // 'getActivity()' is required as this is being ran from a Fragment.
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Accuracy:" + locations.getAccuracy(), Toast.LENGTH_LONG).show();
+                        buttonPlay.setEnabled(true);
+                        buttonStop.setEnabled(true);
+                        progressBar.setVisibility(View.GONE);
+                        textViewSearch.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }, 0, 500000); // End of your timer code.
+
+    }
+
+
+
+
     // Set up the Google maps
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
@@ -352,18 +418,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         return Double.parseDouble(decimalformatTwo.format(calorieBurnedWomen));
     }
 
-    public String calculateSpeed(){
-
-        double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
-        double timeVitesse = elapsedMillis/1000; // Divide by 1000 for second
-        double distanceVitesse = (double) distance ;
-        double vitesse = distanceVitesse/timeVitesse;
-        vitesse = vitesse *3.60; // for km/h
-        String vitesses = decimalformatTwo.format(vitesse);
-
-        return vitesses;
-    }
-
 
     public LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
@@ -390,10 +444,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             listAltitude.add(altitude);
 
             // Add speed to the list
-            listSpeed.add(Double.parseDouble(calculateSpeed()));
+            listSpeed.add(Double.parseDouble(decimalformatTwo.format(locations.getSpeed()*3.6)));
 
             // Update speed view
-            speedView.setText(calculateSpeed()+ " km/h");
+            speedView.setText(decimalformatTwo.format(locations.getSpeed()*3.6)+ " km/h");
+
 
             // UPDATE textViews DISTANCE
             distanceView.setText(calculateDistance() +" m");
