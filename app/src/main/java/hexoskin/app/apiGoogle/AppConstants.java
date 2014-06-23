@@ -7,7 +7,8 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 
 /**
- * Created by Vincent Pont
+ * Created by Google
+ * Modified by Vincent Pont
  * Last Modification 17.06.2014
  *
  */

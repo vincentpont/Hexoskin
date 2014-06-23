@@ -21,7 +21,6 @@ import hexoskin.app.maps.MapsActivity;
  *
  */
 
-
 public class NewSeanceActivity extends Activity {
 
     private ImageButton buttonEnableGPS ;
@@ -40,29 +39,23 @@ public class NewSeanceActivity extends Activity {
         buttonEnableGPS = (ImageButton) findViewById(R.id.buttonEnableGPS);
         buttonStart = (Button) findViewById(R.id.buttonStart);
 
-        // If GPS is enable we disabled the button
-        if(testGPSEnable() == true){
-            buttonEnableGPS.setEnabled(false);
-        }
-        else{
-            // Ask enable gps
+        // Check if GPS is already enable if not we ask the user to turn it on
+        if(testGPSEnable() == false){
+            Toast.makeText(getApplicationContext(), "GPS OFF, Please turn on GPS.", Toast.LENGTH_LONG).show();
             Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(i);
-            Toast.makeText(getApplicationContext(), "GPS OFF, Please turn on GPS.", Toast.LENGTH_LONG).show();
         }
 
-        // Listener enable GPS
+        // Listener enable GPS button
         buttonEnableGPS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // Ask enable gps
                 Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(i);
             }
         });
 
-        // Listener start
+        // Listener start button
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +75,6 @@ public class NewSeanceActivity extends Activity {
                     startActivity(intentMaps);
                 }
                 else{
-                    buttonEnableGPS.setEnabled(true);
                     Toast.makeText(getApplicationContext(), "The GPS is not enable!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -90,7 +82,10 @@ public class NewSeanceActivity extends Activity {
 
     }
 
-    // Method that test is GPS is enable or not
+    /**
+     * Method to test if the GPS is enable
+     * @return boolean true or false
+     */
     private Boolean testGPSEnable(){
 
         Boolean test ;

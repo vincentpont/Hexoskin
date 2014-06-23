@@ -24,6 +24,7 @@ import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.apiGoogle.AppConstants;
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.maps.MapsActivity;
+import com.google.appengine.api.datastore.Text;
 
 /**
  * Created by Vincent Pont
@@ -58,6 +59,10 @@ public class ResumeSeanceActivity extends Activity {
     private SimpleDateFormat sdfDataStore = new SimpleDateFormat("yyyy/MM/dd HH:mm");
     private SimpleDateFormat sdfView = new SimpleDateFormat("yyyy/MM/dd");
     private Intent intentMaps;
+    private String sLati = "";
+    private String sLong = "";
+    private String sAlti = "";
+    private String sSpeed = "";
 
 
     @Override
@@ -65,6 +70,7 @@ public class ResumeSeanceActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resume_seance);
 
+        // Set intents
         intentInfos = new Intent(this, InfosUserActivity.class);
         intentMaps = new Intent(this, MapsActivity.class);
 
@@ -85,6 +91,7 @@ public class ResumeSeanceActivity extends Activity {
             listStringSpeed = extras.getStringArrayList("listStringSpeed");
         }
 
+        // Set variables
         durationView = (TextView) findViewById(R.id.textViewDurationResume);
         caloriesView = (TextView) findViewById(R.id.textViewCaloriesBurnedResume);
         distanceView = (TextView) findViewById(R.id.textViewDistanceResume);
@@ -103,6 +110,31 @@ public class ResumeSeanceActivity extends Activity {
             avgMeterMinView.setText(avgMeterMinExtras);
             speedView.setText(speedExtras);
         }
+
+        // Convert strings into text for datastore (500+ characters
+        for(int i = 0 ; i<listStringLat.size(); i++){
+            sLati+= listStringLat.get(i);
+        }
+
+        for(int i = 0 ; i<listStringLong.size(); i++){
+            sLong+= listStringLong.get(i);
+        }
+
+        for(int i = 0 ; i<listStringAlti.size(); i++){
+            sAlti+= listStringAlti.get(i);
+        }
+
+        for(int i = 0 ; i<listStringSpeed.size(); i++){
+            sSpeed+= listStringSpeed.get(i);
+        }
+
+        Toast.makeText(getApplicationContext(), "sLati :" + sLati, Toast.LENGTH_SHORT).show();
+        Text textLatitude = new Text(sLati);
+        Text textLongitude = new Text(sLong);
+        Text textAltitude = new Text(sAlti);
+        Text textSpeed = new Text(sSpeed);
+
+
 
         // Put base data in Datastore
         putDataSeance = new AsyncTask<Void, Void, PutDataSeance> () {
@@ -126,7 +158,9 @@ public class ResumeSeanceActivity extends Activity {
                     putDataInStore.execute();
 
                 } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), "Error " + e.toString(), Toast.LENGTH_SHORT).show();
                     Log.e("Error", e.toString());
+
                 }
                 return null;
             }
@@ -144,12 +178,13 @@ public class ResumeSeanceActivity extends Activity {
                 try {
                     // Call the api method and pass the values to save the data
                     PutDataMap putlistLat = apiServiceHandle.greetings()
-                            .putDataMap(emailUser,sdfDataStore.format(date), listStringLat,
-                                    listStringLong, listStringAlti, listStringSpeed);
+                            .putDataMap(emailUser,sdfDataStore.format(date),listStringLat,
+                                    listStringLong, listStringAlti,listStringSpeed  );
 
                     putlistLat.execute();
 
                 } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), "Error " + e.toString(), Toast.LENGTH_SHORT).show();
                     Log.e("Error", e.toString());
                 }
                 return null;

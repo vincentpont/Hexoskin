@@ -33,13 +33,14 @@ import hexoskin.app.seance.ResumeSeanceActivity;
 
 /**
  * Created by Vincent Pont
+ * Activity maps : Show the maps and information to the users
  * Last Modification 17.06.2014
  *
  */
 
 public class MapsActivity extends FragmentActivity implements View.OnClickListener{
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GoogleMap mMap;
     private String caloriesBurned ;
     private String bestProvider;
     private String sexe;
@@ -77,6 +78,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private TextView textViewSearch;
     private ProgressBar progressBar ;
     private TableLayout tableLayoutMaps ;
+    private Timer timer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,18 +111,13 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         textViewSearch = (TextView) findViewById(R.id.textViewSearch);
         tableLayoutMaps = (TableLayout) findViewById(R.id.tableLayoutMaps);
 
-
         // Add listener
         buttonPlay.setOnClickListener(this);
         buttonStop.setOnClickListener(this);
         buttonPause.setOnClickListener(this);
 
-
-        // Test if GPS is enable or not
-        if(testGPSEnable() == true){
-            //Toast.makeText(getApplicationContext(), "GPS ON", Toast.LENGTH_SHORT).show();
-        }
-        else{
+        // Test if GPS is already enable
+        if(testGPSEnable() == false){
             Toast.makeText(getApplicationContext(), "GPS OFF, Please turn on GPS.", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(i);
@@ -140,13 +137,14 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             actualPosition = new LatLng(latitude,longitude);
         }
 
+        // Move camera if we had already an location
+        if(actualPosition!=null){
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
+        }
+
         // Create map
         setUpMapIfNeeded();
 
-        // Move camera
-        if(actualPosition!=null){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
-        }
 
         Toast.makeText(getApplicationContext(), "Wait until GPS is calibrate.", Toast.LENGTH_SHORT).show();
 
@@ -161,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                             chronometer.setText("0" + c.getText().toString());
                         }
                         // Calculate meter/min
-                        //IF chrono is 15 second we can calculate average for one min, etc..
+                        // IF chrono is 15 second we can calculate average for one min, etc..
                         if(chronometer.getText().toString().equals("0:15")){
                             distanceMeterMin = distance*4;
                             String stringResult = decimalformatTwo.format(distanceMeterMin) +" m/min";
@@ -195,7 +193,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                     }
              });
 
-                setPrgressBar();
+                // Call method to wait until GPS is calibrate
+                setProgressBar();
 
     }
 
@@ -296,7 +295,10 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         super.onDestroy();
     }
 
-    // Method that test is GPS is enable or not
+    /**
+     * Method to test if the GPS is enable
+     * @return boolean true or false
+     */
     private Boolean testGPSEnable(){
         Boolean test ;
         LocationManager mlocManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
@@ -304,20 +306,20 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         return test;
     }
 
-    // Method to set the progressBar
-    public void setPrgressBar(){
-
-        Timer timer = new Timer();
+    /**
+     * Create a timer for wainting to calibrate the GPS to be more accurate.
+     */
+    public void setProgressBar(){
 
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                // Your logic here...
 
                 long t = Calendar.getInstance().getTimeInMillis();
                 // low is the number return by accuracy best is the signal
-                //&& Calendar.getInstance().getTimeInMillis() - t < 15000
+                // locations.getAccuracy() > 20
 
+                // Wait 15 seconds
                 while(Calendar.getInstance().getTimeInMillis() - t < 15000){
                     try {
                         Thread.sleep(1000);
@@ -325,8 +327,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                         e.printStackTrace();
                     }
                 }
-
-                while (locations.getAccuracy() >= 10) {
+                // Wait if we don't have an accuracy == signal
+                while (locations.hasAccuracy()) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -334,12 +336,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                     }
                 }
 
-                // When you need to modify a UI element, do so on the UI thread.
-                // 'getActivity()' is required as this is being ran from a Fragment.
+
+                // Modify the UI element
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //Toast.makeText(getApplicationContext(), "Accuracy:" + locations.getAccuracy(), Toast.LENGTH_LONG).show();
                         tableLayoutMaps.setVisibility(View.VISIBLE);
                         buttonPlay.setVisibility(View.VISIBLE);
                         buttonPause.setVisibility(View.VISIBLE);
@@ -349,14 +350,13 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                     }
                 });
             }
-        }, 0, 999999999); // End of your timer code.
+        }, 0, 999999999); // Set max time
 
     }
 
-
-
-
-    // Set up the Google maps
+    /**
+     * Set up the Google maps
+     */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
@@ -370,17 +370,21 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-    // Add attributes to the maps (location, markers)
+    /**
+     * Add attributes to the maps (location, markers)
+     */
     private void setUpMap() {
         mMap.setMyLocationEnabled(true);
         actualPosition = new LatLng(latitude,longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
     }
 
-    //Calculate distance between two points
+    /**
+     * Calculate distance between two points
+     */
     private String calculateDistance(){
 
-        // We must reset the variable
+        // We must reset the variable each time
         distance = 0 ;
 
         for(int i = 0 ; i < listLat.size()-1; i++) {
@@ -395,13 +399,17 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 locationB.setLongitude(listLong.get(i + 1));
 
                 distance += locationA.distanceTo(locationB);
-
             }
         }
         return decimalformatTwo.format(distance);
     }
 
-    //Calculate calories for men
+    /**
+     * Calculate burned calories for men
+     * We take an average for heart rate beacause we don't have this information
+     * So : 220 - age.
+     * @return double calories
+     */
     private double calculateCaloriesMen(){
         double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
         elapsedMillis = (elapsedMillis/1000.00)/60.00;
@@ -411,7 +419,12 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         return Double.parseDouble(decimalformatTwo.format(calorieBurnedMen));
     }
 
-    //Calculate calories for women
+    /**
+     * Calculate burned calories for women
+     * We take an average for heart rate beacause we don't have this information
+     * So : 220 - age.
+     * @return double calories
+     */
     private double calculateCaloriesWomen(){
         double elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
         elapsedMillis = (elapsedMillis/1000.00)/60.00;
@@ -422,6 +435,10 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     }
 
 
+    /**
+     * Location listener
+     * Here we know when the GPS location changed and we do all the stuff
+     */
     public LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
 
@@ -434,6 +451,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 mMap.addMarker(new MarkerOptions().position(new LatLng(listLat.get(0), listLong.get(0))).title("Start"));
             }
 
+            // Draw path
             // Add a point(location) and draw the polyline when 2 points are inserted
             rectOptions.add(new LatLng(latitude, longitude));
             mMap.addPolyline(rectOptions);
@@ -442,7 +460,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             listLat.add(latitude);
             listLong.add(longitude);
 
-            // Get altitude
+            // Get altitude and add to list
             altitude = locations.getAltitude();
             listAltitude.add(altitude);
 
@@ -453,10 +471,10 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             speedView.setText(decimalformatTwo.format(locations.getSpeed()*3.6)+ " km/h");
 
 
-            // UPDATE textViews DISTANCE
+            // Update textViews DISTANCE
             distanceView.setText(calculateDistance() +" m");
 
-            // UPDATE textViews CALORIES, and check if women or men
+            // Update textViews CALORIES, and check if women or men
             if(sexe.toString().equals("femme")){
                 caloriesBurned = String.valueOf(calculateCaloriesWomen());
                 caloriesBurnedView.setText(caloriesBurned + " ca");

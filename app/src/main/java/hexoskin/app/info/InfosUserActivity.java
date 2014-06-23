@@ -59,7 +59,9 @@ public class InfosUserActivity extends Activity {
 
     }
 
-
+    /**
+     * Add values into the 3 spinners. (Sexe, Age, Poids)
+     */
     public void addValuesToSpinner(){
 
         List<String> listSexe = new ArrayList<String>();

@@ -11,7 +11,8 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.plus.PlusClient;
 
 /**
- * Created by Google modified by Vincent Pont
+ * Created by Google
+ * Modified by Vincent Pont
  * Last Modification 17.06.2014
  *
  */
@@ -292,11 +293,13 @@ public abstract class PlusBaseActivity extends Activity
 
 
     /*
+
+    * Class to get the email address of the user google account
     * Author : Vincent Pont
+    * Last modification : 17.06.2014
     * Class to get the email address of the user google account
     *
     */
-
     public static class ClassIntern
     {
         private String emailUserInter;
