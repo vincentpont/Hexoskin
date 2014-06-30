@@ -137,13 +137,14 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             actualPosition = new LatLng(latitude,longitude);
         }
 
+
+        // Create map
+        setUpMapIfNeeded();
+
         // Move camera if we had already an location
         if(actualPosition!=null){
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(actualPosition, 16));
         }
-
-        // Create map
-        setUpMapIfNeeded();
 
 
         Toast.makeText(getApplicationContext(), "Wait until GPS is calibrate.", Toast.LENGTH_SHORT).show();
@@ -316,8 +317,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             public void run() {
 
                 long t = Calendar.getInstance().getTimeInMillis();
-                // low is the number return by accuracy best is the signal
-                // locations.getAccuracy() > 20
 
                 // Wait 15 seconds
                 while(Calendar.getInstance().getTimeInMillis() - t < 15000){
@@ -327,14 +326,17 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                         e.printStackTrace();
                     }
                 }
-                // Wait if we don't have an accuracy == signal
-                while (locations.hasAccuracy()) {
+
+                // low is the number return by accuracy best is the precision
+                /*
+                while (locations.getAccuracy() > 50) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
+                */
 
 
                 // Modify the UI element
@@ -381,6 +383,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
     /**
      * Calculate distance between two points
+     * @return distance in String
      */
     private String calculateDistance(){
 
@@ -463,6 +466,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             // Get altitude and add to list
             altitude = locations.getAltitude();
             listAltitude.add(altitude);
+
+            Toast.makeText(getApplicationContext(), "Speed : "+locations.getSpeed()*3.6, Toast.LENGTH_SHORT).show();
 
             // Add speed to the list
             listSpeed.add(Double.parseDouble(decimalformatTwo.format(locations.getSpeed()*3.6)));

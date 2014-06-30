@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataSeance;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataMap;
+import com.appspot.logical_light_564.helloworld.model.JsonMap;
 import com.example.hexoskin.app.R;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -25,6 +26,10 @@ import hexoskin.app.apiGoogle.AppConstants;
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.maps.MapsActivity;
 import com.google.appengine.api.datastore.Text;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Vincent Pont
@@ -52,17 +57,20 @@ public class ResumeSeanceActivity extends Activity {
     private AsyncTask<Void, Void, PutDataSeance> putDataSeance;
     private AsyncTask<Void, Void, PutDataMap> putDataMap;
     private List<String> listStringLat = new ArrayList<String>();
+    private List<Double> listDoubleLat = new ArrayList<Double>();
     private List<String> listStringLong = new ArrayList<String>();
     private List<String> listStringAlti = new ArrayList<String>();
     private List<String> listStringSpeed = new ArrayList<String>();
     private Date date = new Date();
-    private SimpleDateFormat sdfDataStore = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-    private SimpleDateFormat sdfView = new SimpleDateFormat("yyyy/MM/dd");
+    private SimpleDateFormat sdfDataStore = new SimpleDateFormat("yyyy.MM.dd.HH:mm");
+    private SimpleDateFormat sdfView = new SimpleDateFormat("yyyy.MM.dd");
     private Intent intentMaps;
     private String sLati = "";
     private String sLong = "";
     private String sAlti = "";
     private String sSpeed = "";
+    String size ;
+
 
 
     @Override
@@ -111,30 +119,15 @@ public class ResumeSeanceActivity extends Activity {
             speedView.setText(speedExtras);
         }
 
-        // Convert strings into text for datastore (500+ characters
-        for(int i = 0 ; i<listStringLat.size(); i++){
-            sLati+= listStringLat.get(i);
+
+
+        // Convert string to double
+
+        for(String s : listStringLat){
+            listDoubleLat.add(Double.parseDouble(s));
         }
 
-        for(int i = 0 ; i<listStringLong.size(); i++){
-            sLong+= listStringLong.get(i);
-        }
-
-        for(int i = 0 ; i<listStringAlti.size(); i++){
-            sAlti+= listStringAlti.get(i);
-        }
-
-        for(int i = 0 ; i<listStringSpeed.size(); i++){
-            sSpeed+= listStringSpeed.get(i);
-        }
-
-        Toast.makeText(getApplicationContext(), "sLati :" + sLati, Toast.LENGTH_SHORT).show();
-        Text textLatitude = new Text(sLati);
-        Text textLongitude = new Text(sLong);
-        Text textAltitude = new Text(sAlti);
-        Text textSpeed = new Text(sSpeed);
-
-
+        size = String.valueOf(listStringLat.size());
 
         // Put base data in Datastore
         putDataSeance = new AsyncTask<Void, Void, PutDataSeance> () {
@@ -158,7 +151,6 @@ public class ResumeSeanceActivity extends Activity {
                     putDataInStore.execute();
 
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "Error " + e.toString(), Toast.LENGTH_SHORT).show();
                     Log.e("Error", e.toString());
 
                 }
@@ -178,13 +170,11 @@ public class ResumeSeanceActivity extends Activity {
                 try {
                     // Call the api method and pass the values to save the data
                     PutDataMap putlistLat = apiServiceHandle.greetings()
-                            .putDataMap(emailUser,sdfDataStore.format(date),listStringLat,
-                                    listStringLong, listStringAlti,listStringSpeed  );
+                            .putDataMap(listStringLat);
 
                     putlistLat.execute();
 
                 } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), "Error " + e.toString(), Toast.LENGTH_SHORT).show();
                     Log.e("Error", e.toString());
                 }
                 return null;
