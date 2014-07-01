@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataSeance;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataMap;
-import com.appspot.logical_light_564.helloworld.model.JsonMap;
 import com.example.hexoskin.app.R;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -57,7 +56,6 @@ public class ResumeSeanceActivity extends Activity {
     private AsyncTask<Void, Void, PutDataSeance> putDataSeance;
     private AsyncTask<Void, Void, PutDataMap> putDataMap;
     private List<String> listStringLat = new ArrayList<String>();
-    private List<Double> listDoubleLat = new ArrayList<Double>();
     private List<String> listStringLong = new ArrayList<String>();
     private List<String> listStringAlti = new ArrayList<String>();
     private List<String> listStringSpeed = new ArrayList<String>();
@@ -65,11 +63,6 @@ public class ResumeSeanceActivity extends Activity {
     private SimpleDateFormat sdfDataStore = new SimpleDateFormat("yyyy.MM.dd.HH:mm");
     private SimpleDateFormat sdfView = new SimpleDateFormat("yyyy.MM.dd");
     private Intent intentMaps;
-    private String sLati = "";
-    private String sLong = "";
-    private String sAlti = "";
-    private String sSpeed = "";
-    String size ;
 
 
 
@@ -120,16 +113,7 @@ public class ResumeSeanceActivity extends Activity {
         }
 
 
-
-        // Convert string to double
-
-        for(String s : listStringLat){
-            listDoubleLat.add(Double.parseDouble(s));
-        }
-
-        size = String.valueOf(listStringLat.size());
-
-        // Put base data in Datastore
+        // Put data in Datastore
         putDataSeance = new AsyncTask<Void, Void, PutDataSeance> () {
 
             @Override
@@ -158,7 +142,7 @@ public class ResumeSeanceActivity extends Activity {
             }
         };
 
-        // Put map data in Datastore
+        // Put data map in Datastore
         putDataMap = new AsyncTask<Void, Void, PutDataMap> () {
 
             @Override
@@ -170,7 +154,9 @@ public class ResumeSeanceActivity extends Activity {
                 try {
                     // Call the api method and pass the values to save the data
                     PutDataMap putlistLat = apiServiceHandle.greetings()
-                            .putDataMap(listStringLat);
+                            .putDataMap(sdfDataStore.format(date),
+                                    emailUser, listStringLat, listStringLong,
+                                    listStringSpeed, listStringAlti);
 
                     putlistLat.execute();
 

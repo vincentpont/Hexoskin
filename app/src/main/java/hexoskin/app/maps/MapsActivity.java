@@ -467,7 +467,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             altitude = locations.getAltitude();
             listAltitude.add(altitude);
 
-            Toast.makeText(getApplicationContext(), "Speed : "+locations.getSpeed()*3.6, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Speed : "+locations.getSpeed()*3.6, Toast.LENGTH_SHORT).show();
 
             // Add speed to the list
             listSpeed.add(Double.parseDouble(decimalformatTwo.format(locations.getSpeed()*3.6)));
