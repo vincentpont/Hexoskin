@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -79,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private ProgressBar progressBar ;
     private TableLayout tableLayoutMaps ;
     private Timer timer = new Timer();
+    private String avgSpeed = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,8 +272,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 resumeSeance.putExtra("Duration", chronometer.getText().toString());
                 resumeSeance.putExtra("CaloriesBurned", caloriesBurnedView.getText());
                 resumeSeance.putExtra("Distance", distanceView.getText());
-                resumeSeance.putExtra("AvgMeterKm",avgMeterMinView.getText());
-                resumeSeance.putExtra("Speed",speedView.getText());
+                resumeSeance.putExtra("Speed",getSpeedAverage(listSpeed) + " km/h");
 
                 startActivity(resumeSeance);
                 break;
@@ -326,7 +327,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                         e.printStackTrace();
                     }
                 }
-
+                // locations.hasAccuracy();
                 // low is the number return by accuracy best is the precision
                 /*
                 while (locations.getAccuracy() > 50) {
@@ -435,6 +436,26 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 ((220-age) * 0.4472) - 20.4022) * Double.parseDouble(decimalformatTwo.format(elapsedMillis))  / 4.184 ;
 
         return Double.parseDouble(decimalformatTwo.format(calorieBurnedWomen));
+    }
+
+    /**
+     * Method that calculate the speed average
+     * @param list speed
+     * @return String with two decimals
+     */
+    private String getSpeedAverage(List<Double> list){
+
+        Double value = 0.0;
+        int count = 1;
+
+        Iterator<Double> iterator = listSpeed.iterator();
+        while (iterator.hasNext()) {
+            value += iterator.next();
+            count++;
+        }
+        value = value /count;
+        return decimalformatTwo.format(value);
+
     }
 
 

@@ -42,13 +42,11 @@ public class ResumeSeanceActivity extends Activity {
     private TextView durationView;
     private TextView caloriesView;
     private TextView distanceView;
-    private TextView avgMeterMinView;
     private TextView textViewDate;
     private TextView speedView;
     private Intent intentInfos;
     private String calorieBurnedExtras;
     private String distanceExtras;
-    private String avgMeterMinExtras;
     private String speedExtras;
     private String emailUser;
     private ImageButton imageButtonSave;
@@ -84,7 +82,6 @@ public class ResumeSeanceActivity extends Activity {
             durationExtras = extras.getString("Duration");
             calorieBurnedExtras = extras.getString("CaloriesBurned");
             distanceExtras = extras.getString("Distance");
-            avgMeterMinExtras = extras.getString("AvgMeterKm");
             speedExtras = extras.getString("Speed");
             listStringLat = extras.getStringArrayList("listStringLat");
             listStringLong = extras.getStringArrayList("listStringLong");
@@ -96,7 +93,6 @@ public class ResumeSeanceActivity extends Activity {
         durationView = (TextView) findViewById(R.id.textViewDurationResume);
         caloriesView = (TextView) findViewById(R.id.textViewCaloriesBurnedResume);
         distanceView = (TextView) findViewById(R.id.textViewDistanceResume);
-        avgMeterMinView = (TextView) findViewById(R.id.textAvgMeterMinResume);
         imageButtonSave = (ImageButton) findViewById(R.id.imageButtonSave);
         imageButtonDelete = (ImageButton) findViewById(R.id.imageButtonDelete);
         textViewDate = (TextView) findViewById(R.id.textViewDate);
@@ -108,7 +104,6 @@ public class ResumeSeanceActivity extends Activity {
             caloriesView.setText(calorieBurnedExtras);
             distanceView.setText(distanceExtras);
             durationView.setText(durationExtras);
-            avgMeterMinView.setText(avgMeterMinExtras);
             speedView.setText(speedExtras);
         }
 
@@ -130,7 +125,7 @@ public class ResumeSeanceActivity extends Activity {
                                     distanceView.getText().toString(),
                                     durationView.getText().toString(),
                                     caloriesView.getText().toString(),
-                                    avgMeterMinView.getText().toString()
+                                    speedView.getText().toString()
                             );
                     putDataInStore.execute();
 

@@ -124,35 +124,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView7"
-                android:layout_column="0"
-                android:height="30dp"
-                android:text="Moy. m/min"
-                android:textSize="18dp"
-                android:typeface="monospace"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textAvgMeterMinResume"
-                android:text="0 min"
-                android:layout_column="4"
-                android:height="30dp"
-                android:textSize="18dp"
-                android:typeface="monospace"/>
-        </TableRow>
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/textView8"
                 android:layout_column="0"
                 android:height="30dp"
-                android:text="Vitesse"
+                android:text="Vitesse Moy."
                 android:textSize="18dp"
                 android:typeface="monospace"/>
 
