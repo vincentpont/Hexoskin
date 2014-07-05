@@ -4,15 +4,24 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.hexoskin.app.R;
+import com.google.android.gms.plus.PlusClient;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import hexoskin.app.login.LoginActivity;
+import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.seance.NewSeanceActivity;
 
 /**
@@ -28,6 +37,8 @@ public class InfosUserActivity extends Activity {
     private Spinner spinnerAge;
     private Spinner spinnerSexe;
     private Intent intentNewSeance;
+    private PlusClient mplusClient;
+    private Intent intentLogin;
 
 
 
@@ -40,7 +51,10 @@ public class InfosUserActivity extends Activity {
         spinnerPoids = (Spinner) findViewById(R.id.spinnerPoids);
         spinnerAge = (Spinner) findViewById(R.id.spinnerAge);
         spinnerSexe = (Spinner) findViewById(R.id.spinnerSexe);
+        PlusBaseActivity.ClassIntern ca = new PlusBaseActivity.ClassIntern();
 
+
+        intentLogin = new Intent(this, LoginActivity.class);
         intentNewSeance = new Intent(this, NewSeanceActivity.class);
 
         // Add values and layout to Spinners

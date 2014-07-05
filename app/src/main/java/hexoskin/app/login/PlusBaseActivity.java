@@ -36,7 +36,7 @@ public abstract class PlusBaseActivity extends Activity
     public boolean mPlusClientIsConnecting = false;
 
     // This is the helper object that connects to Google Play Services.
-    private PlusClient mPlusClient;
+    private static PlusClient mPlusClient;
     private static String emailUser;
 
     // The saved result from {@link #onConnectionFailed(ConnectionResult)}.  If a connection
@@ -85,6 +85,8 @@ public abstract class PlusBaseActivity extends Activity
                         Scopes.PLUS_ME).build();
 
         loginActivity = new Intent(this, LoginActivity.class);
+
+
     }
 
     /**
@@ -303,14 +305,22 @@ public abstract class PlusBaseActivity extends Activity
     public static class ClassIntern
     {
         private String emailUserInter;
+        private PlusClient mplusClients ;
 
         public ClassIntern()
         {
+            mplusClients = mPlusClient;
             emailUserInter  = emailUser;
         }
         public String getEmailUser() {
             return emailUserInter;
         }
+
+        public PlusClient getMplusClients() {
+            return mplusClients;
+        }
+
+
     }
 
 }

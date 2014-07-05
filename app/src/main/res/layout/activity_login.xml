@@ -17,13 +17,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
-    <ScrollView
+    <TableLayout
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,53 +33,119 @@
                 android:id="@+id/plus_sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="32dp"/>
+                android:layout_marginBottom="32dp" />
 
-            <LinearLayout
+            <TableLayout
                 android:id="@+id/plus_sign_out_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:weightSum="3">
 
-                <Button
-                    android:id="@+id/plus_sign_out_button"
-                    style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="@string/plus_sign_out"/>
-
-                <Button
-                android:id="@+id/plus_disconnect_button"
-                style="?android:textAppearanceSmall"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/plus_disconnect"/>
-
-                <Button
-                    android:id="@+id/go_hexoskin"
+                <TableRow
                     android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="1"
-                    android:text="Begin HexoSkin"
-                    android:background="@drawable/buttonstyle"
-                    android:textColor="#FFFFFF"
-                    android:textSize="22sp"
-                    android:shadowColor="#A8A8A8"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="5" />
+                    android:layout_height="fill_parent">
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/textViewCOMPTE"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:width="400dp"
+                        android:height="40dp"
+                        android:text="Compte"
+                        android:textSize="22dp"
+                        android:typeface="monospace" />
+                </TableRow>
+
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <Button
+                        android:id="@+id/plus_sign_out_button"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp"
+                        android:background="@drawable/buttonstyle"
+                        android:shadowRadius="5"
+                        android:text="@string/plus_sign_out"
+                        android:visibility="gone"/>
+
+                    <Button
+                        android:id="@+id/plus_disconnect_button"
+                        android:layout_column="1"
+                        android:layout_weight="1"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp"
+                        android:background="@drawable/buttonstyle"
+                        android:shadowColor="#A8A8A8"
+                        android:shadowRadius="5"
+                        android:typeface="monospace"
+                        android:text="@string/plus_disconnect" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <TextView
+                        android:id="@+id/textView20"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:height="40dp"
+                        android:textSize="22dp" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <TextView
+                        android:id="@+id/textViewHEXO"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_column="0"
+                        android:width="400dp"
+                        android:height="40dp"
+                        android:shadowColor="#A8A8A8"
+                        android:text="HexoSkin"
+                        android:textSize="22dp"
+                        android:typeface="monospace" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                    <Button
+                        android:id="@+id/go_hexoskin"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:background="@drawable/buttonstyle"
+                        android:shadowColor="#A8A8A8"
+                        android:typeface="monospace"
+                        android:shadowRadius="5"
+                        android:text="Commencer"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp" />
+
+                </TableRow>
+
+            </TableLayout>
 
             <LinearLayout
                 android:id="@+id/email_login_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-               <AutoCompleteTextView
+
+                <AutoCompleteTextView
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -87,7 +153,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <EditText
                     android:id="@+id/password"
@@ -100,7 +166,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/email_sign_in_button"
@@ -110,11 +176,11 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/action_sign_in"
                     android:textStyle="bold"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </TableLayout>
 
 </LinearLayout>
 

@@ -18,6 +18,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -77,6 +79,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
 
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
