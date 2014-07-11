@@ -101,10 +101,10 @@ public class ResumeSeanceActivity extends Activity {
 
         // Set the TextViews
         if(extras != null) {
-            caloriesView.setText(calorieBurnedExtras);
-            distanceView.setText(distanceExtras);
+            caloriesView.setText(calorieBurnedExtras + " ca");
+            distanceView.setText(distanceExtras + " m");
             durationView.setText(durationExtras);
-            speedView.setText(speedExtras);
+            speedView.setText(speedExtras + " km/h");
         }
 
 
@@ -122,10 +122,10 @@ public class ResumeSeanceActivity extends Activity {
                     PutDataSeance putDataInStore = apiServiceHandle.greetings()
                             .putDataSeance(sdfDataStore.format(date),
                                     emailUser,
-                                    distanceView.getText().toString(),
+                                    distanceExtras,
                                     durationView.getText().toString(),
-                                    caloriesView.getText().toString(),
-                                    speedView.getText().toString()
+                                    calorieBurnedExtras,
+                                    speedExtras
                             );
                     putDataInStore.execute();
 

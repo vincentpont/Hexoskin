@@ -45,6 +45,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private String caloriesBurned ;
     private String bestProvider;
     private String sexe;
+    private String totalCalories;
+    private String totalDistance;
     private double latitude;
     private double longitude;
     private double altitude;
@@ -80,7 +82,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
     private ProgressBar progressBar ;
     private TableLayout tableLayoutMaps ;
     private Timer timer = new Timer();
-    private String avgSpeed = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,9 +271,9 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 resumeSeance.putStringArrayListExtra("listStringSpeed", (ArrayList<String>) listStringSpeed);
                 resumeSeance.putStringArrayListExtra("listStringAlti", (ArrayList<String>) listStringAlti);
                 resumeSeance.putExtra("Duration", chronometer.getText().toString());
-                resumeSeance.putExtra("CaloriesBurned", caloriesBurnedView.getText());
-                resumeSeance.putExtra("Distance", distanceView.getText());
-                resumeSeance.putExtra("Speed",getSpeedAverage(listSpeed) + " km/h");
+                resumeSeance.putExtra("CaloriesBurned", totalCalories);
+                resumeSeance.putExtra("Distance", totalDistance);
+                resumeSeance.putExtra("Speed",getSpeedAverage(listSpeed));
 
                 startActivity(resumeSeance);
                 break;
@@ -499,15 +500,18 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
             // Update textViews DISTANCE
             distanceView.setText(calculateDistance() +" m");
+            totalDistance = decimalformatTwo.format(distance);
 
             // Update textViews CALORIES, and check if women or men
             if(sexe.toString().equals("femme")){
                 caloriesBurned = String.valueOf(calculateCaloriesWomen());
                 caloriesBurnedView.setText(caloriesBurned + " ca");
+                totalCalories = caloriesBurned;
             }
             else{
                 caloriesBurned = String.valueOf(calculateCaloriesMen());
                 caloriesBurnedView.setText(caloriesBurned + " ca");
+                totalCalories = caloriesBurned;
             }
         }
 
