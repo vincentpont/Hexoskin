@@ -275,6 +275,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 resumeSeance.putExtra("Distance", totalDistance);
                 resumeSeance.putExtra("Speed",getSpeedAverage(listSpeed));
 
+                // Put infos of users for saving
+                resumeSeance.putExtra("Sexe", sexe);
+                resumeSeance.putExtra("Poids", String.valueOf(poids));
+                resumeSeance.putExtra("Age",String.valueOf(age));
+
                 startActivity(resumeSeance);
                 break;
         }

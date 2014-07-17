@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataSeance;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataMap;
+import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutUsers;
 import com.example.hexoskin.app.R;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,10 +50,14 @@ public class ResumeSeanceActivity extends Activity {
     private String distanceExtras;
     private String speedExtras;
     private String emailUser;
+    private String sexe;
+    private String weight;
+    private String age;
     private ImageButton imageButtonSave;
     private ImageButton imageButtonDelete;
     private AsyncTask<Void, Void, PutDataSeance> putDataSeance;
     private AsyncTask<Void, Void, PutDataMap> putDataMap;
+    private AsyncTask<Void, Void, PutUsers> putUsers;
     private List<String> listStringLat = new ArrayList<String>();
     private List<String> listStringLong = new ArrayList<String>();
     private List<String> listStringAlti = new ArrayList<String>();
@@ -87,6 +92,9 @@ public class ResumeSeanceActivity extends Activity {
             listStringLong = extras.getStringArrayList("listStringLong");
             listStringAlti = extras.getStringArrayList("listStringAlti");
             listStringSpeed = extras.getStringArrayList("listStringSpeed");
+            sexe = extras.getString("Sexe");
+            age = extras.getString("Age");
+            weight = extras.getString("Poids");
         }
 
         // Set variables
@@ -108,7 +116,7 @@ public class ResumeSeanceActivity extends Activity {
         }
 
 
-        // Put data in Datastore
+        // Put the data of workout in Datastore
         putDataSeance = new AsyncTask<Void, Void, PutDataSeance> () {
 
             @Override
@@ -137,7 +145,7 @@ public class ResumeSeanceActivity extends Activity {
             }
         };
 
-        // Put data map in Datastore
+        // Put the data of the map in Datastore
         putDataMap = new AsyncTask<Void, Void, PutDataMap> () {
 
             @Override
@@ -162,6 +170,32 @@ public class ResumeSeanceActivity extends Activity {
             }
         };
 
+        // Save the users into Datastore
+        putUsers = new AsyncTask<Void, Void, PutUsers> () {
+
+            @Override
+            protected PutUsers doInBackground(Void... voids) {
+
+                // Retrieve service handle.
+                Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
+
+                try {
+                    // Call the api method and pass the values to save the data
+                    PutUsers putUser = apiServiceHandle.greetings()
+                            .putUsers(emailUser,
+                                    sexe,
+                                    age,
+                                    weight);
+
+                    putUser.execute();
+
+                } catch (IOException e) {
+                    Log.e("Error", e.toString());
+                }
+                return null;
+            }
+        };
+
         // Listener save data in DataStore
         imageButtonSave.setOnClickListener(new View.OnClickListener() {
 
@@ -171,6 +205,7 @@ public class ResumeSeanceActivity extends Activity {
                 // Put data in datastore
                 putDataSeance.execute();
                 putDataMap.execute();
+                putUsers.execute();
                 Toast.makeText(getApplicationContext(), "Seance saved.", Toast.LENGTH_SHORT).show();
                 startActivity(intentInfos);
             }
