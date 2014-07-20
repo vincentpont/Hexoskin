@@ -11,30 +11,31 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataSeance;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataMap;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutUsers;
+import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.UserExist;
 import com.example.hexoskin.app.R;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.apiGoogle.AppConstants;
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.maps.MapsActivity;
-import com.google.appengine.api.datastore.Text;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by Vincent Pont
  * Last Modification 17.06.2014
- *
  */
 
 public class ResumeSeanceActivity extends Activity {
@@ -53,11 +54,13 @@ public class ResumeSeanceActivity extends Activity {
     private String sexe;
     private String weight;
     private String age;
+    String value;
     private ImageButton imageButtonSave;
     private ImageButton imageButtonDelete;
     private AsyncTask<Void, Void, PutDataSeance> putDataSeance;
     private AsyncTask<Void, Void, PutDataMap> putDataMap;
     private AsyncTask<Void, Void, PutUsers> putUsers;
+    private AsyncTask<String, Void, JSONObject> userExist;
     private List<String> listStringLat = new ArrayList<String>();
     private List<String> listStringLong = new ArrayList<String>();
     private List<String> listStringAlti = new ArrayList<String>();
@@ -68,11 +71,49 @@ public class ResumeSeanceActivity extends Activity {
     private Intent intentMaps;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resume_seance);
+
+        // Get the jsonObject to know if the user already exist
+        userExist = new AsyncTask<String, Void, JSONObject>() {
+
+            JSONObject jsonObject;
+
+            @Override
+            protected JSONObject doInBackground(String... params) {
+
+                // Retrieve service handle.
+                Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
+
+                try {
+                    // Call the api method and pass the value
+                    return (JSONObject) apiServiceHandle.greetings().userExist(emailUser).getJsonContent();
+
+                } catch (IOException e) {
+                    Log.e("Error", e.toString());
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject obj) {
+                Log.i("Value :", obj.toString());
+                if (obj != null) {
+                    try {
+                        value = obj.getString("Value");
+                        Log.i("Value :", value);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        };
+
+        //userExist.execute();
 
         // Set intents
         intentInfos = new Intent(this, InfosUserActivity.class);
@@ -83,7 +124,7 @@ public class ResumeSeanceActivity extends Activity {
         emailUser = ca.getEmailUser();
 
         Bundle extras = getIntent().getExtras();
-        if(extras != null) {
+        if (extras != null) {
             durationExtras = extras.getString("Duration");
             calorieBurnedExtras = extras.getString("CaloriesBurned");
             distanceExtras = extras.getString("Distance");
@@ -108,7 +149,7 @@ public class ResumeSeanceActivity extends Activity {
         textViewDate.setText(sdfView.format(date));
 
         // Set the TextViews
-        if(extras != null) {
+        if (extras != null) {
             caloriesView.setText(calorieBurnedExtras + " ca");
             distanceView.setText(distanceExtras + " m");
             durationView.setText(durationExtras);
@@ -117,7 +158,7 @@ public class ResumeSeanceActivity extends Activity {
 
 
         // Put the data of workout in Datastore
-        putDataSeance = new AsyncTask<Void, Void, PutDataSeance> () {
+        putDataSeance = new AsyncTask<Void, Void, PutDataSeance>() {
 
             @Override
             protected PutDataSeance doInBackground(Void... voids) {
@@ -146,7 +187,7 @@ public class ResumeSeanceActivity extends Activity {
         };
 
         // Put the data of the map in Datastore
-        putDataMap = new AsyncTask<Void, Void, PutDataMap> () {
+        putDataMap = new AsyncTask<Void, Void, PutDataMap>() {
 
             @Override
             protected PutDataMap doInBackground(Void... voids) {
@@ -170,8 +211,9 @@ public class ResumeSeanceActivity extends Activity {
             }
         };
 
+
         // Save the users into Datastore
-        putUsers = new AsyncTask<Void, Void, PutUsers> () {
+        putUsers = new AsyncTask<Void, Void, PutUsers>() {
 
             @Override
             protected PutUsers doInBackground(Void... voids) {
@@ -194,6 +236,8 @@ public class ResumeSeanceActivity extends Activity {
                 }
                 return null;
             }
+
+
         };
 
         // Listener save data in DataStore
@@ -206,7 +250,9 @@ public class ResumeSeanceActivity extends Activity {
                 putDataSeance.execute();
                 putDataMap.execute();
                 putUsers.execute();
-                Toast.makeText(getApplicationContext(), "Seance saved.", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(getApplicationContext(), "Seance saved.",
+                        Toast.LENGTH_SHORT).show();
                 startActivity(intentInfos);
             }
         });

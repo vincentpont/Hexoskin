@@ -27,7 +27,6 @@ import hexoskin.app.seance.NewSeanceActivity;
 /**
  * Created by Vincent Pont
  * Last Modification 17.06.2014
- *
  */
 
 public class InfosUserActivity extends Activity {
@@ -39,7 +38,6 @@ public class InfosUserActivity extends Activity {
     private Intent intentNewSeance;
     private PlusClient mplusClient;
     private Intent intentLogin;
-
 
 
     @Override
@@ -76,7 +74,7 @@ public class InfosUserActivity extends Activity {
     /**
      * Add values into the 3 spinners. (Sexe, Age, Poids)
      */
-    public void addValuesToSpinner(){
+    public void addValuesToSpinner() {
 
         List<String> listSexe = new ArrayList<String>();
         listSexe.add("Homme");
@@ -89,8 +87,8 @@ public class InfosUserActivity extends Activity {
 
         // Add values to the spinnerPoids
         List<String> listPoids = new ArrayList<String>();
-        for(int i = 30 ; i < 151 ; i++){
-            listPoids.add(Integer.toString(i)+" kgs");
+        for (int i = 30; i < 151; i++) {
+            listPoids.add(Integer.toString(i) + " kgs");
         }
         ArrayAdapter<String> dataAdapterPoids = new ArrayAdapter<String>(this,
                 R.layout.spinner_layout, listPoids);
@@ -100,15 +98,14 @@ public class InfosUserActivity extends Activity {
 
         // Add values to the spinnerAge
         List<String> listAge = new ArrayList<String>();
-        for(int i = 12 ; i < 91 ; i++){
-            listAge.add(Integer.toString(i)+" ans");
+        for (int i = 12; i < 91; i++) {
+            listAge.add(Integer.toString(i) + " ans");
         }
         ArrayAdapter<String> dataAdapterAge = new ArrayAdapter<String>(this,
                 R.layout.spinner_layout, listAge);
         dataAdapterAge.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerAge.setAdapter(dataAdapterAge);
     }
-
 
 
 }

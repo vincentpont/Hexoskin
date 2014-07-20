@@ -5,6 +5,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.Scopes;
@@ -289,7 +290,7 @@ public abstract class PlusBaseActivity extends Activity
     }
 
 
-    public  PlusClient getPlusClient() {
+    public PlusClient getPlusClient() {
         return mPlusClient;
     }
 
@@ -302,16 +303,15 @@ public abstract class PlusBaseActivity extends Activity
     * Class to get the email address of the user google account
     *
     */
-    public static class ClassIntern
-    {
+    public static class ClassIntern {
         private String emailUserInter;
-        private PlusClient mplusClients ;
+        private PlusClient mplusClients;
 
-        public ClassIntern()
-        {
+        public ClassIntern() {
             mplusClients = mPlusClient;
-            emailUserInter  = emailUser;
+            emailUserInter = emailUser;
         }
+
         public String getEmailUser() {
             return emailUserInter;
         }

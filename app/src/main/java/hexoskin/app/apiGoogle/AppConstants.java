@@ -10,7 +10,6 @@ import com.google.api.client.json.JsonFactory;
  * Created by Google
  * Modified by Vincent Pont
  * Last Modification 17.06.2014
- *
  */
 
 public class AppConstants {
@@ -32,7 +31,7 @@ public class AppConstants {
 
         // Use a builder to help formulate the API request.
         Helloworld.Builder helloWorld = new Helloworld.Builder(AppConstants.HTTP_TRANSPORT,
-                AppConstants.JSON_FACTORY,null);
+                AppConstants.JSON_FACTORY, null);
 
         return helloWorld.build();
     }
