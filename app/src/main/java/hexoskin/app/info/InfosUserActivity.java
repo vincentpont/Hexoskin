@@ -2,31 +2,22 @@ package hexoskin.app.info;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
-
 import com.example.hexoskin.app.R;
 import com.google.android.gms.plus.PlusClient;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import hexoskin.app.login.LoginActivity;
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.seance.NewSeanceActivity;
 
 /**
  * Created by Vincent Pont
- * Last Modification 17.06.2014
+ * Last Modification 21.07.2014
  */
 
 public class InfosUserActivity extends Activity {

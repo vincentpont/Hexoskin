@@ -10,16 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import com.example.hexoskin.app.R;
-
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.maps.MapsActivity;
 
 
 /**
  * Created by Vincent Pont
- * Last Modification 17.06.2014
+ * Last Modification 21.07.2014
  */
 
 public class NewSeanceActivity extends Activity {
@@ -42,7 +40,7 @@ public class NewSeanceActivity extends Activity {
 
         // Check if GPS is already enable if not we ask the user to turn it on
         if (testGPSEnable() == false) {
-            Toast.makeText(getApplicationContext(), "GPS OFF, Please turn on GPS.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "GPS OFF, Svp activez le GPS.", Toast.LENGTH_LONG).show();
             Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(i);
         }
@@ -62,7 +60,7 @@ public class NewSeanceActivity extends Activity {
             public void onClick(View v) {
                 // Only if GPS is enable
                 if (testGPSEnable() == true) {
-                    Toast.makeText(getApplicationContext(), "New workout in progress...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Nouvel entraînement...", Toast.LENGTH_SHORT).show();
 
                     // Get extra from intentInfo
                     Bundle extras = getIntent().getExtras();
@@ -75,7 +73,7 @@ public class NewSeanceActivity extends Activity {
                     intentMaps.putExtra("Poids", poid);
                     startActivity(intentMaps);
                 } else {
-                    Toast.makeText(getApplicationContext(), "The GPS is not enable!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Le GPS n'est pas activé!", Toast.LENGTH_SHORT).show();
                 }
             }
         });

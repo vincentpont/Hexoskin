@@ -11,31 +11,24 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.appspot.logical_light_564.helloworld.Helloworld;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataSeance;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutDataMap;
 import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.PutUsers;
-import com.appspot.logical_light_564.helloworld.Helloworld.Greetings.UserExist;
 import com.example.hexoskin.app.R;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import hexoskin.app.info.InfosUserActivity;
 import hexoskin.app.apiGoogle.AppConstants;
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.maps.MapsActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Created by Vincent Pont
- * Last Modification 17.06.2014
+ * Last Modification 21.07.2014
  */
 
 public class ResumeSeanceActivity extends Activity {
@@ -54,13 +47,11 @@ public class ResumeSeanceActivity extends Activity {
     private String sexe;
     private String weight;
     private String age;
-    String value;
     private ImageButton imageButtonSave;
     private ImageButton imageButtonDelete;
     private AsyncTask<Void, Void, PutDataSeance> putDataSeance;
     private AsyncTask<Void, Void, PutDataMap> putDataMap;
     private AsyncTask<Void, Void, PutUsers> putUsers;
-    private AsyncTask<String, Void, JSONObject> userExist;
     private List<String> listStringLat = new ArrayList<String>();
     private List<String> listStringLong = new ArrayList<String>();
     private List<String> listStringAlti = new ArrayList<String>();
@@ -75,45 +66,6 @@ public class ResumeSeanceActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resume_seance);
-
-        // Get the jsonObject to know if the user already exist
-        userExist = new AsyncTask<String, Void, JSONObject>() {
-
-            JSONObject jsonObject;
-
-            @Override
-            protected JSONObject doInBackground(String... params) {
-
-                // Retrieve service handle.
-                Helloworld apiServiceHandle = AppConstants.getApiServiceHandle();
-
-                try {
-                    // Call the api method and pass the value
-                    return (JSONObject) apiServiceHandle.greetings().userExist(emailUser).getJsonContent();
-
-                } catch (IOException e) {
-                    Log.e("Error", e.toString());
-                }
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(JSONObject obj) {
-                Log.i("Value :", obj.toString());
-                if (obj != null) {
-                    try {
-                        value = obj.getString("Value");
-                        Log.i("Value :", value);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        };
-
-        //userExist.execute();
 
         // Set intents
         intentInfos = new Intent(this, InfosUserActivity.class);
@@ -155,6 +107,10 @@ public class ResumeSeanceActivity extends Activity {
             durationView.setText(durationExtras);
             speedView.setText(speedExtras + " km/h");
         }
+
+        /**** AsyncTask *****
+         *********************
+         *********************/
 
 
         // Put the data of workout in Datastore
@@ -236,9 +192,9 @@ public class ResumeSeanceActivity extends Activity {
                 }
                 return null;
             }
-
-
         };
+
+        /**** Listeners ****/
 
         // Listener save data in DataStore
         imageButtonSave.setOnClickListener(new View.OnClickListener() {
@@ -248,24 +204,26 @@ public class ResumeSeanceActivity extends Activity {
 
                 // Put data in datastore
                 putDataSeance.execute();
-                putDataMap.execute();
                 putUsers.execute();
+                putDataMap.execute();
 
-                Toast.makeText(getApplicationContext(), "Seance saved.",
+                Toast.makeText(getApplicationContext(), "Entraînement sauvegardé.",
                         Toast.LENGTH_SHORT).show();
                 startActivity(intentInfos);
             }
         });
 
-        // Listener save data in DataStore
+        // Listener delete workout
         imageButtonDelete.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Seance deleted.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Entraînement supprimé.", Toast.LENGTH_SHORT).show();
                 startActivity(intentInfos);
             }
         });
+
+
     }
 
 

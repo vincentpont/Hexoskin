@@ -10,6 +10,7 @@
         <activity
             android:name="hexoskin.app.login.LoginActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,14 +19,17 @@
         </activity>
         <activity
             android:name="hexoskin.app.info.InfosUserActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:name="hexoskin.app.seance.NewSeanceActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
         </activity>
         <activity
             android:name="hexoskin.app.seance.ResumeSeanceActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
         </activity>
         <activity

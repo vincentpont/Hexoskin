@@ -16,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.hexoskin.app.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,7 +23,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,13 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import hexoskin.app.seance.ResumeSeanceActivity;
 
 /**
  * Created by Vincent Pont
  * Activity maps : Show the maps and information to the users
- * Last Modification 17.06.2014
+ * Last Modification 21.07.2014
  */
 
 public class MapsActivity extends FragmentActivity implements View.OnClickListener {
@@ -123,7 +120,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
 
         // Test if GPS is already enable
         if (testGPSEnable() == false) {
-            Toast.makeText(getApplicationContext(), "GPS OFF, Please turn on GPS.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "GPS OFF, Svp activez le GPS.", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(i);
         }
@@ -152,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
         }
 
 
-        Toast.makeText(getApplicationContext(), "Wait until GPS is calibrate.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Attendez pendant que le GPS se calibre.", Toast.LENGTH_SHORT).show();
 
         // Chronometer listener
         chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
@@ -206,8 +203,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 buttonPlay.setVisibility(View.GONE);
                 buttonPause.setEnabled(true);
 
-                // Launch listener GPS, 2000 = time until update, 2 = meter until update
-                locationManager.requestLocationUpdates(bestProvider, 1500, 2, locationListener);
+                // Launch listener GPS, 3000 = time until update in second, 3 = meters until update
+                locationManager.requestLocationUpdates(bestProvider, 3000, 3, locationListener);
 
                 chronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
                 chronometer.start();
@@ -241,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 locationManager = null;
                 locations = null;
                 mMap.stopAnimation();
-                Toast.makeText(getApplicationContext(), "Workout finish.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Entraînement terminé.", Toast.LENGTH_SHORT).show();
 
                 // Add finish marker
                 if (listLat.size() > 0) {
@@ -493,8 +490,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             // Get altitude and add to list
             altitude = locations.getAltitude();
             listAltitude.add(altitude);
-
-            //Toast.makeText(getApplicationContext(), "Speed : "+locations.getSpeed()*3.6, Toast.LENGTH_SHORT).show();
 
             // Add speed to the list
             listSpeed.add(Double.parseDouble(decimalformatTwo.format(locations.getSpeed() * 3.6)));

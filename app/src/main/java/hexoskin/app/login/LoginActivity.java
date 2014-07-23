@@ -18,29 +18,24 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.example.hexoskin.app.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import hexoskin.app.info.InfosUserActivity;
 
 
 /**
  * Created by Google
  * Modified by Vincent Pont
- * Last Modification 17.06.2014
+ * Last Modification 21.07.2014
  *
  */
 

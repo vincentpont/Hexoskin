@@ -9,7 +9,7 @@ import com.google.api.client.json.JsonFactory;
 /**
  * Created by Google
  * Modified by Vincent Pont
- * Last Modification 17.06.2014
+ * Last Modification 21.07.2014
  */
 
 public class AppConstants {

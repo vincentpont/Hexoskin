@@ -5,7 +5,6 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.Scopes;
@@ -14,7 +13,7 @@ import com.google.android.gms.plus.PlusClient;
 /**
  * Created by Google
  * Modified by Vincent Pont
- * Last Modification 17.06.2014
+ * Last Modification 21.07.2014
  *
  */
 
