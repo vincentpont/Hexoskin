@@ -298,7 +298,7 @@ public abstract class PlusBaseActivity extends Activity
 
     * Class to get the email address of the user google account
     * Author : Vincent Pont
-    * Last modification : 17.06.2014
+    * Last modification : 25.07.2014
     * Class to get the email address of the user google account
     *
     */

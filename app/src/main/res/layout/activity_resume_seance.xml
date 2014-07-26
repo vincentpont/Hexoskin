@@ -2,17 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="hexoskin.app.seance.ResumeSeanceActivity">
 
     <TableLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
 
         <TableRow
@@ -20,25 +20,25 @@
             android:layout_height="fill_parent">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Séance du "
                 android:id="@+id/textViewDateResume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_column="0"
-                android:textSize="19dp"
                 android:height="60dp"
+                android:minWidth="100dp"
+                android:text="Séance du "
                 android:textIsSelectable="false"
-                android:typeface="monospace"
-                android:minWidth="100dp"/>
+                android:textSize="19dp"
+                android:typeface="monospace" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
                 android:id="@+id/textViewDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_column="4"
+                android:text=""
                 android:textSize="18dp"
-                android:typeface="monospace"/>
+                android:typeface="monospace" />
         </TableRow>
 
         <TableRow
@@ -46,23 +46,23 @@
             android:layout_height="fill_parent">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Distance"
                 android:id="@+id/textView"
-                android:layout_column="0"
-                android:textSize="18dp"
-                android:height="30dp"
-                android:typeface="monospace"/>
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 m"
+                android:layout_column="0"
+                android:height="30dp"
+                android:text="Distance"
+                android:textSize="18dp"
+                android:typeface="monospace" />
+
+            <TextView
                 android:id="@+id/textViewDistanceResume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_column="4"
+                android:text="0 m"
                 android:textSize="17dp"
-                android:typeface="monospace"/>
+                android:typeface="monospace" />
         </TableRow>
 
         <TableRow
@@ -70,51 +70,51 @@
             android:layout_height="fill_parent">
 
             <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Temps"
-            android:id="@+id/textView2"
-            android:layout_column="0"
-            android:textSize="18dp"
-            android:height="30dp"
-            android:typeface="monospace"/>
-
-            <TextView
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="00:00"
-                android:id="@+id/textViewDurationResume"
-                android:layout_column="4"
-                android:textSize="18dp"
-                android:height="30dp"
-                android:typeface="monospace"/>
-
-
-        </TableRow>
-
-
-        <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Calories"
-                android:id="@+id/textView3"
                 android:layout_column="0"
-                android:textSize="18dp"
                 android:height="30dp"
-                android:typeface="monospace"/>
+                android:text="Temps"
+                android:textSize="18dp"
+                android:typeface="monospace" />
 
             <TextView
+                android:id="@+id/textViewDurationResume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 ca"
-                android:id="@+id/textViewCaloriesBurnedResume"
                 android:layout_column="4"
+                android:height="30dp"
+                android:text="00:00"
+                android:textSize="18dp"
+                android:typeface="monospace" />
+
+
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="0"
+                android:height="30dp"
+                android:text="Calories"
+                android:textSize="18dp"
+                android:typeface="monospace" />
+
+            <TextView
+                android:id="@+id/textViewCaloriesBurnedResume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="4"
+                android:text="0 ca"
                 android:textSize="17dp"
-                android:typeface="monospace"/>
+                android:typeface="monospace" />
         </TableRow>
 
         <TableRow
@@ -122,24 +122,24 @@
             android:layout_height="fill_parent">
 
             <TextView
+                android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView8"
                 android:layout_column="0"
                 android:height="30dp"
                 android:text="Vitesse Moy."
                 android:textSize="18dp"
-                android:typeface="monospace"/>
+                android:typeface="monospace" />
 
             <TextView
+                android:id="@+id/textViewSpeedResume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textViewSpeedResume"
-                android:text="0 km/h"
                 android:layout_column="4"
                 android:height="30dp"
+                android:text="0 km/h"
                 android:textSize="18dp"
-                android:typeface="monospace"/>
+                android:typeface="monospace" />
         </TableRow>
 
         <TableRow
@@ -147,12 +147,12 @@
             android:layout_height="fill_parent">
 
             <TextView
+                android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView12"
                 android:layout_column="0"
                 android:height="30dp"
-                android:typeface="monospace"/>
+                android:typeface="monospace" />
 
         </TableRow>
 
@@ -165,22 +165,22 @@
                 android:layout_height="wrap_content"
                 android:layout_column="0"
                 android:background="@drawable/buttonstyle"
-                android:src="@android:drawable/ic_menu_save"
+                android:maxWidth="65dp"
                 android:minHeight="45dp"
-                android:maxWidth="65dp"/>
+                android:src="@android:drawable/ic_menu_save" />
 
 
             <ImageButton
                 android:id="@+id/imageButtonDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="15dp"
                 android:layout_column="4"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/buttonstyle"
-                android:src="@android:drawable/ic_menu_delete"
+                android:maxWidth="65dp"
                 android:minHeight="45dp"
-                android:maxWidth="65dp" />
+                android:src="@android:drawable/ic_menu_delete" />
 
         </TableRow>
 

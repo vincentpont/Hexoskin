@@ -6,12 +6,12 @@
         android:id="@+id/menu_newtraining"
         android:orderInCategory="1"
         android:showAsAction="always"
-        android:title="New training"/>
+        android:title="New training" />
     <item
         android:id="@+id/menu_carte"
         android:orderInCategory="2"
         android:showAsAction="always"
-        android:title="Carte"/>
+        android:title="Carte" />
 
 
 </menu>

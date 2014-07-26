@@ -35,7 +35,7 @@ import hexoskin.app.info.InfosUserActivity;
 /**
  * Created by Google
  * Modified by Vincent Pont
- * Last Modification 21.07.2014
+ * Last Modification 25.07.2014
  *
  */
 
@@ -398,7 +398,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mAuthTask = null;
             showProgress(false);
 
-            // Si succès on redirige sur infoUsers
+            // Si succès we start activity info
             if (success) {
 
                 startActivity(intentInfosUsersAcrivity);

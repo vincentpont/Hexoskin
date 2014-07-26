@@ -28,7 +28,7 @@ import hexoskin.app.maps.MapsActivity;
 
 /**
  * Created by Vincent Pont
- * Last Modification 21.07.2014
+ * Last Modification 25.07.2014
  */
 
 public class ResumeSeanceActivity extends Activity {
@@ -202,7 +202,7 @@ public class ResumeSeanceActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                // Put data in datastore
+                // Execute AsyncTask methods
                 putDataSeance.execute();
                 putUsers.execute();
                 putDataMap.execute();
@@ -222,24 +222,17 @@ public class ResumeSeanceActivity extends Activity {
                 startActivity(intentInfos);
             }
         });
-
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_general, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         switch (item.getItemId()) {
             case R.id.menu_newtraining:
                 startActivity(intentInfos);

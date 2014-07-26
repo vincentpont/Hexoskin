@@ -8,16 +8,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import com.example.hexoskin.app.R;
-import com.google.android.gms.plus.PlusClient;
 import java.util.ArrayList;
 import java.util.List;
-import hexoskin.app.login.LoginActivity;
 import hexoskin.app.login.PlusBaseActivity;
 import hexoskin.app.seance.NewSeanceActivity;
 
 /**
  * Created by Vincent Pont
- * Last Modification 21.07.2014
+ * Last Modification 25.07.2014
  */
 
 public class InfosUserActivity extends Activity {
@@ -27,8 +25,6 @@ public class InfosUserActivity extends Activity {
     private Spinner spinnerAge;
     private Spinner spinnerSexe;
     private Intent intentNewSeance;
-    private PlusClient mplusClient;
-    private Intent intentLogin;
 
 
     @Override
@@ -42,8 +38,6 @@ public class InfosUserActivity extends Activity {
         spinnerSexe = (Spinner) findViewById(R.id.spinnerSexe);
         PlusBaseActivity.ClassIntern ca = new PlusBaseActivity.ClassIntern();
 
-
-        intentLogin = new Intent(this, LoginActivity.class);
         intentNewSeance = new Intent(this, NewSeanceActivity.class);
 
         // Add values and layout to Spinners
@@ -63,7 +57,7 @@ public class InfosUserActivity extends Activity {
     }
 
     /**
-     * Add values into the 3 spinners. (Sexe, Age, Poids)
+     * Method to add values into the 3 spinners. (Sexe, Age, Poids)
      */
     public void addValuesToSpinner() {
 

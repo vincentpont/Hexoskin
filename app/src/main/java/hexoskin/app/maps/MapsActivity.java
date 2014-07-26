@@ -35,7 +35,7 @@ import hexoskin.app.seance.ResumeSeanceActivity;
 /**
  * Created by Vincent Pont
  * Activity maps : Show the maps and information to the users
- * Last Modification 21.07.2014
+ * Last Modification 25.07.2014
  */
 
 public class MapsActivity extends FragmentActivity implements View.OnClickListener {
@@ -238,6 +238,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 locationManager = null;
                 locations = null;
                 mMap.stopAnimation();
+
                 Toast.makeText(getApplicationContext(), "Entraînement terminé.", Toast.LENGTH_SHORT).show();
 
                 // Add finish marker
@@ -259,7 +260,7 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                     listStringAlti.add(String.valueOf(d));
                 }
 
-                // Pass the values for resume seance
+                // Pass the values for activity resume seance
                 resumeSeance.putStringArrayListExtra("listStringLat", (ArrayList<String>) listStringLat);
                 resumeSeance.putStringArrayListExtra("listStringLong", (ArrayList<String>) listStringLong);
                 resumeSeance.putStringArrayListExtra("listStringSpeed", (ArrayList<String>) listStringSpeed);
@@ -326,16 +327,6 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                         e.printStackTrace();
                     }
                 }
-
-                /* // Low is the number return by accuracy best is the precision
-                while (locations.getAccuracy() > 50) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                */
 
                 // Modify the UI element
                 runOnUiThread(new Runnable() {
@@ -498,11 +489,11 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
             speedView.setText(decimalformatTwo.format(locations.getSpeed() * 3.6) + " km/h");
 
 
-            // Update textViews DISTANCE
+            // Update textViews distance
             distanceView.setText(calculateDistance() + " m");
             totalDistance = decimalformatTwo.format(distance);
 
-            // Update textViews CALORIES, and check if women or men
+            // Update textViews calories, and check if women or men
             if (sexe.toString().equals("femme")) {
                 caloriesBurned = String.valueOf(calculateCaloriesWomen());
                 caloriesBurnedView.setText(caloriesBurned + " ca");
