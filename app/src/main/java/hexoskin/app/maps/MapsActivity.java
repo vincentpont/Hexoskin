@@ -203,8 +203,8 @@ public class MapsActivity extends FragmentActivity implements View.OnClickListen
                 buttonPlay.setVisibility(View.GONE);
                 buttonPause.setEnabled(true);
 
-                // Launch listener GPS, 3000 = time until update in second, 3 = meters until update
-                locationManager.requestLocationUpdates(bestProvider, 3000, 3, locationListener);
+                // Launch listener GPS, 2000 = time until update in second, 2 = meters until update
+                locationManager.requestLocationUpdates(bestProvider, 2000, 2, locationListener);
 
                 chronometer.setBase(SystemClock.elapsedRealtime() + timeWhenStopped);
                 chronometer.start();

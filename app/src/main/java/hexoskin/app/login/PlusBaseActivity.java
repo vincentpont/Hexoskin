@@ -13,7 +13,7 @@ import com.google.android.gms.plus.PlusClient;
 /**
  * Created by Google
  * Modified by Vincent Pont
- * Last Modification 21.07.2014
+ * Last Modification 25.07.2014
  *
  */
 
